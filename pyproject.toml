@@ -1,0 +1,37 @@
+[build-system]
+requires = [
+    "wheel",
+]
+
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "TkClassWiz"
+authors = [
+    {name = "David Hozic"}
+]
+description = "Library for graphically defining objects based on class annotations. Works with Tkinter / TTKBootstrap"
+readme = "README.rst"
+requires-python = ">=3.8"
+keywords = ["Tkinter", "TTKBootstrap", "Python3", "ObjectDef", "ClassWiz", "ClassWiz", "GUI"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dynamic = ["optional-dependencies", "version"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "tkclasswiz.__version__"}
+
+[tool.setuptools.dynamic.optional-dependencies]
+docs = {file = "requirements/docs.txt"}
+
+tool.setuptools.packages = [
+    "tkclasswiz"
+]
