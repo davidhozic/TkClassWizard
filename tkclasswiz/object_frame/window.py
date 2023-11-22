@@ -1,4 +1,4 @@
-from typing import get_origin, Iterable
+from typing import get_origin, Iterable, List
 from collections.abc import Iterable as ABCIterable
 
 from .frame_number import *
@@ -46,7 +46,7 @@ class ObjectEditWindow(tk.Toplevel):
         dpi_5 = dpi_scaled(5)
 
         # Elements
-        self.opened_frames = []
+        self.opened_frames: List[NewObjectFrameBase] = []
         self.frame_main = ttk.Frame(self, padding=(dpi_5, dpi_5))
         self.frame_toolbar = ttk.Frame(self, padding=(dpi_5, dpi_5))
         ttk.Button(self.frame_toolbar, text="Close", command=self.close_object_edit_frame).pack(side="left")
@@ -80,14 +80,16 @@ class ObjectEditWindow(tk.Toplevel):
         Opens new frame for defining an object.
         Parameters are the same as for NewObjectFrameBase.
         """
-        prev_frame = None
         if len(self.opened_frames):
             prev_frame = self.opened_frames[-1]
+        else:
+            prev_frame = None
 
         class_origin = get_origin(class_)
         if class_origin is None:
             class_origin = class_
 
+        frame: NewObjectFrameBase
         frame_class = self.TYPE_INIT_MAP.get(class_origin, NewObjectFrameStruct)
         self.opened_frames.append(frame := frame_class(class_, *args, **kwargs, parent=self.frame_main))
         frame.pack(fill=tk.BOTH, expand=True)

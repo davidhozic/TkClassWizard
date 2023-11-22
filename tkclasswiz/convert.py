@@ -21,9 +21,10 @@ __all__ = (
     "ObjectInfo",
     "convert_to_objects",
     "convert_to_object_info",
-    "convert_to_json",
-    "convert_from_json",
+    "convert_to_dict",
+    "convert_from_dict",
     "convert_objects_to_script",
+    "_convert_to_objects_cached",
 )
 
 TClass = TypeVar("TClass")
@@ -180,22 +181,17 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
     """
     object_data = []
     import_data = []
-    other_data = []
 
     if isinstance(object, ObjectInfo):
         object_str = f"{object.class_.__name__}(\n    "
         attr_str = []
         for attr, value in object.data.items():
             if isinstance(value, (ObjectInfo, list, tuple, set)):
-                value, import_data_, other_str = convert_objects_to_script(value)
+                value, import_data_ = convert_objects_to_script(value)
                 import_data.extend(import_data_)
-                if other_str != "":
-                    other_data.append(other_str)
 
             elif isinstance(value, str):
-                value, _, other_str = convert_objects_to_script(value)
-                if other_str != "":
-                    other_data.append(other_str)
+                value, _ = convert_objects_to_script(value)
 
             attr_str.append(f"{attr}={value},\n")
             if issubclass(type(value), Enum):
@@ -209,10 +205,9 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
     elif isinstance(object, (list, tuple, set)):
         _list_data = ["[\n"]
         for element in object:
-            object_str, import_data_, other_str = convert_objects_to_script(element)
+            object_str, import_data_ = convert_objects_to_script(element)
             _list_data.append(object_str + ",\n")
             import_data.extend(import_data_)
-            other_data.append(other_str)
 
         _list_data = "    ".join(''.join(_list_data).splitlines(keepends=True)) + "]"
         object_data.append(_list_data)
@@ -223,7 +218,7 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
         else:
             object_data.append(str(object))
 
-    return ",".join(object_data).strip(), import_data, "\n".join(other_data).strip()
+    return ",".join(object_data).strip(), import_data
 
 
 @extendable
@@ -298,7 +293,6 @@ def _convert_to_objects_cached(*args, **kwargs):
 
 def convert_to_objects(
     d: Union[ObjectInfo, dict, list],
-    cached: bool = False
 ) -> Union[object, dict, List]:
     """
     Converts :class:`ObjectInfo` instances into actual objects,
@@ -312,12 +306,10 @@ def convert_to_objects(
     cached: bool
         If True items will be returned from cache. ONLY USE FOR IMMUTABLE USE.
     """
-    convert_func = _convert_to_objects_cached if cached else convert_to_objects
-
     def convert_object_info():
         data_conv = {
             k:
-            convert_func(v, cached)
+            convert_to_objects(v)
             if isinstance(v, (list, tuple, set, ObjectInfo, dict)) else v
             for k, v in d.data.items()
         }
@@ -326,11 +318,11 @@ def convert_to_objects(
         return new_obj
 
     if isinstance(d, (list, tuple, set)):
-        return [convert_func(item, cached) for item in d]
+        return [convert_to_objects(item) for item in d]
     if isinstance(d, ObjectInfo):
         return convert_object_info()
     if isinstance(d, dict):
-        return {k: convert_func(v, cached) for k, v in d.items()}
+        return {k: convert_to_objects(v) for k, v in d.items()}
 
     return d
 

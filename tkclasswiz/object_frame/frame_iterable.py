@@ -22,6 +22,28 @@ __all__ = (
 
 @extendable
 class NewObjectFrameIterable(NewObjectFrameBase):
+    """
+    Frame for use inside the ObjectEditWindow that allows definition of lists / iterables.
+    The list annotations should be annotated similarly to the following example: ``list[Union[int, float]]`` 
+    or ``Iterable[Union[int, float]]`` or ``Iterable[SomeClass]``
+
+
+    Parameters
+    ------------
+    class_: Any
+        The class we are defining for.
+    return_widget: Any
+        The widget to insert the ObjectInfo into after saving.
+    parent: TopLevel
+        The parent window.
+    old_data: Any
+        The old_data gui data.
+    check_parameters: bool
+        Check parameters (by creating the real object) upon saving.
+        This is ignored if editing a function instead of a class.
+    allow_save: bool
+        If False, will open in read-only mode.
+    """
     def __new__(cls, *args, **kwargs):
         if kwargs.get("allow_save", True):
             obj = super().__new__(NewObjectFrameIterable)
@@ -30,7 +52,15 @@ class NewObjectFrameIterable(NewObjectFrameBase):
 
         return obj
 
-    def __init__(self, class_: Any, return_widget: Any, parent=None, old_data: list = None, check_parameters: bool = True, allow_save=True):
+    def __init__(
+        self,
+        class_: Any,
+        return_widget: Any,
+        parent=None,
+        old_data: list = None,
+        check_parameters: bool = True,
+        allow_save = True
+    ):
         dpi_5 = dpi_scaled(5)
         super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
