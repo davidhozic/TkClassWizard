@@ -90,6 +90,8 @@ class ObjectEditWindow(tk.Toplevel):
         Opens new frame for defining an object.
         Parameters are the same as for NewObjectFrameBase.
 
+        Parameters
+        ------------
         class_: Any
             The class we are defining for.
         return_widget: Any

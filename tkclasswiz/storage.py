@@ -75,7 +75,7 @@ class ListBoxObjects(tk.Listbox):
 
     def insert(self, index: Union[str, int], *elements: Union[str, float]) -> None:
         """
-        Inserts ``elements`` to ``index``. The ``index must be a numerical index or tkinter.END ('end').
+        Inserts ``elements`` to ``index``. The ``index`` must be a numerical index or tkinter.END ('end').
         """
         _ret = super().insert(index, *elements)
         if isinstance(index, str):

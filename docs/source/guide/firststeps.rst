@@ -30,8 +30,6 @@ It's best we take a look at an example.
     import tkinter.ttk as ttk
     import tkclasswiz as wiz
 
-
-
     # Normal Python classes with annotations (type hints)
     class Wheel:
         def __init__(self, diameter: float):
@@ -117,4 +115,4 @@ At the very bottom of the example, we define a few buttons:
 - 'Print defined': Calls ``print_defined`` function which converts the abstract object into a real one and prints it out,
   including its type.
 
-Now let's take a look at how our example looks :ref:`inside a GUI <Object frame for structured data>`.
+Now let's take a look at how our example looks :ref:`inside a GUI <Defining data>`.

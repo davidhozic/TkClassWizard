@@ -66,6 +66,7 @@ def register_object_objectinfo_rule(cls: type, mapping: Optional[dict] = {}, **k
     Example
     ----------
     .. code-block:: python
+
         class FILE:
             def __init__(self, filename: str):
                 self.fullpath = filename
@@ -303,7 +304,7 @@ def convert_to_objects(
 ) -> Union[object, dict, List]:
     """
     Converts :class:`ObjectInfo` instances into actual objects,
-    specified by the ObjectInfo.class_ attribute.
+    specified by the ObjectInfo.class\ _ attribute.
 
     Parameters
     -----------------
