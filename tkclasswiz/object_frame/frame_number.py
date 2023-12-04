@@ -1,7 +1,10 @@
 
 from typing import Union, Any
+
 from .frame_base import *
 from ..extensions import extendable
+from ..doc import doc_category
+
 import tkinter as tk
 
 
@@ -10,6 +13,7 @@ __all__ = (
 )
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameNumber(NewObjectFrameBase):
     """
     Frame for use inside the ObjectEditWindow that allows definition of numerical data.

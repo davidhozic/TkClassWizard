@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Union, Optional
 from contextlib import suppress
 from inspect import isclass
+from .doc import doc_category
 
 
 __all__ = (
@@ -40,6 +41,7 @@ ADDITIONAL_ANNOTATIONS = {
 }
 
 
+@doc_category("Annotations")
 def register_annotations(cls: type, mapping: Optional[dict] = {}, **annotations):
     """
     Extends original annotations of ``cls``.

@@ -12,6 +12,7 @@ from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
 from ..annotations import get_annotations
+from ..doc import doc_category
 
 from .frame_base import *
 
@@ -31,6 +32,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameStruct(NewObjectFrameBase):
     """
     Frame for inside the :class:`ObjectEditWindow` that allows object definition.

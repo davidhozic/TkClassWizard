@@ -6,6 +6,9 @@ from typing import Callable, TypeVar, Union
 from inspect import isclass
 from functools import wraps
 
+from .doc import doc_category, DOCUMENTATION_MODE
+
+
 T = TypeVar('T')
 
 
@@ -47,6 +50,7 @@ class Extension:
         return self._loader
 
 
+@doc_category("Extensions")
 def extendable(obj: Union[T, list]) -> T:
     """
     Decorator that makes the obj extendable.
@@ -86,6 +90,10 @@ def extendable(obj: Union[T, list]) -> T:
     obj: T
         Function or a class that can be extended.
     """
+
+    if DOCUMENTATION_MODE:
+        return obj
+
     if isclass(obj):
         @wraps(obj, updated=[])
         class ExtendableClass(obj):
@@ -116,7 +124,6 @@ def extendable(obj: Union[T, list]) -> T:
 
         return ExtendableClass
     else:
-        @wraps(obj, updated=[])
         class ExtendableFunction:
             __reg_post_ext__ = []
             __reg_pre_ext__ = []
@@ -155,6 +162,5 @@ def extendable(obj: Union[T, list]) -> T:
             @classmethod
             def get_extensions(obj):
                 return obj.__reg_pre_ext__, obj.__reg_post_ext__[:]
-
 
         return ExtendableFunction()

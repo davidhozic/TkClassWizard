@@ -14,6 +14,7 @@
 import sys
 import os
 
+os.environ["DOCUMENTATION"] = "True"
 sys.path.insert(0, os.path.abspath('../../src/'))
 sys.path.insert(0, os.path.abspath('.'))
 
@@ -79,8 +80,7 @@ autodoc_default_options = {
 
 # Intersphinx
 intersphinx_mapping = {
-    # 'PyCord': ("https://docs.pycord.dev/en/stable/", None),
-    # "Python" : ("https://docs.python.org/3/", None)
+    "Python" : ("https://docs.python.org/3/", None)
 }
 
 # ----------- HTML ----------- #

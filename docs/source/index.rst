@@ -1,108 +1,46 @@
 =========================================================
-Discord Advertisement Framework (|version|)
+TkClassWizard (|version|)
 =========================================================
-The Discord advertisement framework is a Python based automatic application that allows **easy automatic advertisement** (and much more) on Discord.
+TkClassWizard - define objects graphically based on class annotations.
+The library allows users to create abstract "ObjectInfo" objects based on the class's parameters, which
+can later be converted to real Python objects and vice versa.
 
-.. image:: ./DEP/daf-gui-front.png
+While all classes with annotations can be defined with TkClassWizard, there is also support
+for some other data types that classes can accept as parameter:
+
+- Other classes with annotations (if no annotation exists, they can be manually defined through TkClassWizard)
+- list
+- Iterable
+- tuple
+- int
+- float
+- string
 
 
 ---------------------
 Links
 ---------------------
-.. tab-set::
-    
-    .. tab-item:: Project
-
-        - `Github <https://github.com/davidhozic/discord-advertisement-framework>`_
-        - `Examples <https://github.com/davidhozic/discord-advertisement-framework/tree/master/Examples>`_
-        - `Releases <https://github.com/davidhozic/discord-advertisement-framework/releases>`_
-
-    .. tab-item:: API Wrapper (Pycord)
-
-        This framework uses a Discord API wrapper called PyCord and it is built to allow working directly with Pycord (eg. framework objects accept Pycord objects as arguments).
-
-        - `PyCord GitHub <https://github.com/Pycord-Development/pycord>`_
-        - `PyCord Documentation <https://docs.pycord.dev/en/master/>`_
+- `Releases <https://github.com/davidhozic/TkClassWizard/releases>`_
 
 
 ------------------
 Need help?
 ------------------
-
-- Checkout the guides:
-
-  - :ref:`Guide (GUI)` 
-  - :ref:`Guide (core)`
-
 - Contact me in my `Discord server <https://discord.gg/DEnvahb2Sw>`_.
 
-----------------------
-Key features
-----------------------
-- Automatic periodic and scheduled messages to multiple servers and channels,
-- Error checking and recovery,
-- Message logging, invite link tracking & statistics
-- Multi-account support
-- Graphical Interface (GUI) / Console (script)
-- Easy to setup
-- Programmatic usage
-- Much more
-
-
-.. note::
-    Running on user accounts is against Discord ToS, however DAF still enables it.
 
 ----------------------
 Installation
 ----------------------
 DAF can be installed though command prompt/terminal using the bottom commands.
-
-.. tab-set::
-
-    .. tab-item:: Main package
         
-        Pre-requirement: `Python (minimum v3.8) <https://www.python.org/downloads/>`_
+Pre-requirement: `Python (minimum v3.8) <https://www.python.org/downloads/>`_
 
-        .. code-block:: bash
 
-            pip install discord-advert-framework
+.. code-block:: bash
 
-    .. tab-item:: Additional functionality
-        
-        Some functionality needs to be installed separately.
-        This was done to reduce the needed space by the daf.
-        
-        .. tab-set::
-        
-            .. tab-item:: Voice
-                
-                - .. code-block:: bash
-                    :caption: Voice Messaging / AUDIO
+    pip install tkclasswiz
 
-                    pip install discord-advert-framework[voice]
-
-            .. tab-item:: SQL
-                
-                - .. code-block:: bash
-                    :caption: SQL logging
-
-                    pip install discord-advert-framework[sql]
-
-            .. tab-item:: Chrome integration
-
-                - .. code-block:: bash
-                     :caption: Chrome integration
-                     
-                     pip install discord-advert-framework[web]
-
-            .. tab-item:: All
-                
-                Install all of the (left) optional dependencies
-
-                - .. code-block:: bash
-                    :caption: All
-
-                    pip install discord-advert-framework[all]
 
 
 ----------------------
@@ -113,4 +51,4 @@ Table of contents
 
     guide/index
     reference/index
-    changelog
+

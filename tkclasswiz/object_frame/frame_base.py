@@ -1,6 +1,5 @@
 from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar
 from contextlib import suppress
-from functools import partial
 
 from ..convert import *
 from ..dpi import *
@@ -8,6 +7,7 @@ from ..utilities import *
 from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
+from ..doc import doc_category
 
 import tkinter.ttk as ttk
 import tkinter as tk
@@ -26,6 +26,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameBase(ttk.Frame):
     """
     Base Frame for inside the :class:`ObjectEditWindow` that allows object definition.

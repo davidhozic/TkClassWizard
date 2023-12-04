@@ -4,6 +4,7 @@ from functools import partial
 from ..convert import *
 from ..dpi import *
 from ..utilities import *
+from ..doc import doc_category
 
 from ..storage import *
 from ..messagebox import Messagebox
@@ -21,6 +22,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameIterable(NewObjectFrameBase):
     """
     Frame for use inside the ObjectEditWindow that allows definition of lists / iterables.

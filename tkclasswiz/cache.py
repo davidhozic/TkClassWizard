@@ -4,6 +4,7 @@ Utility module used for caching.
 from typing import Callable
 from functools import wraps
 import pickle
+from .doc import doc_category
 
 
 __all__ = (
@@ -12,6 +13,7 @@ __all__ = (
 
 
 # Caching
+@doc_category("Caching")
 def cache_result(max: int = 256):
     """
     Caching function that also allows dictionary and lists to be used as a key.

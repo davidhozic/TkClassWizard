@@ -11,6 +11,7 @@ from .frame_base import *
 from ..dpi import dpi_scaled
 from ..extensions import extendable
 from ..utilities import gui_except
+from ..doc import doc_category
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -22,6 +23,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object window")
 class ObjectEditWindow(tk.Toplevel):
     """
     Top level window for creating and editing new objects.
@@ -75,10 +77,30 @@ class ObjectEditWindow(tk.Toplevel):
         return self._closed
 
     @gui_except()
-    def open_object_edit_frame(self, class_, *args, **kwargs):
+    def open_object_edit_frame(
+        self,
+        class_,
+        return_widget,
+        old_data,
+        check_parameters: bool,
+        allow_save: bool,
+        **kwargs
+    ):
         """
         Opens new frame for defining an object.
         Parameters are the same as for NewObjectFrameBase.
+
+        class_: Any
+            The class we are defining for.
+        return_widget: Any
+            The widget to insert the ObjectInfo into after saving.
+        old_data: Any
+            The old_data gui data.
+        check_parameters: bool
+            Check parameters (by creating the real object) upon saving.
+            This is ignored if editing a function instead of a class.
+        allow_save: bool
+            If False, will open in read-only mode.
         """
         if len(self.opened_frames):
             prev_frame = self.opened_frames[-1]
@@ -91,7 +113,17 @@ class ObjectEditWindow(tk.Toplevel):
 
         frame: NewObjectFrameBase
         frame_class = self.TYPE_INIT_MAP.get(class_origin, NewObjectFrameStruct)
-        self.opened_frames.append(frame := frame_class(class_, *args, **kwargs, parent=self.frame_main))
+        self.opened_frames.append(
+            frame := frame_class(
+                class_,
+                return_widget,
+                old_data=old_data,
+                check_parameters=check_parameters,
+                allow_save=allow_save,
+                parent=self.frame_main,
+                **kwargs
+            )
+        )
         frame.pack(fill=tk.BOTH, expand=True)
         frame.update_window_title()
         if prev_frame is not None:

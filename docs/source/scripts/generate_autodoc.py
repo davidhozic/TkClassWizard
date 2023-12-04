@@ -10,7 +10,7 @@ OUTPUT_PATH = "../reference"
 os.chdir(os.path.dirname(__file__))
 os.environ["DOCUMENTATION"] = "True"
 
-import daf.misc.doc as doc
+import tkclasswiz.doc as doc
 
 CATEGORY_TEMPLATE = \
 """
@@ -34,7 +34,6 @@ AUTO_CLASS_TEMPLATE =\
 ------------------------
 .. autoclass:: {object_path}
     :members:
-    :inherited-members:
 """
 
 AUTO_ENUM_TEMPLATE =\

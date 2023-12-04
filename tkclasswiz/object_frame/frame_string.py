@@ -4,6 +4,7 @@ from typing import Any
 from ..storage import *
 from .frame_base import *
 from ..extensions import extendable
+from ..doc import doc_category
 
 import tkinter as tk
 
@@ -17,6 +18,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameString(NewObjectFrameBase):
     def __init__(
         self,

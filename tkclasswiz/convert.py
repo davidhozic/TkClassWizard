@@ -11,6 +11,7 @@ from .utilities import import_class
 from .extensions import extendable
 from .cache import cache_result
 from .annotations import *
+from .doc import doc_category
 
 import datetime as dt
 import warnings
@@ -38,6 +39,7 @@ CONVERSION_ATTR_TO_PARAM = {
 }
 
 
+@doc_category("Conversion")
 def register_object_objectinfo_rule(cls: type, mapping: Optional[dict] = {}, **kwargs):
     """
     Used for adding new conversion rules when converting from Python objects
@@ -87,6 +89,7 @@ def register_object_objectinfo_rule(cls: type, mapping: Optional[dict] = {}, **k
     CONVERSION_ATTR_TO_PARAM[cls].update(**kwargs, **mapping)
 
 
+@doc_category("Conversion")
 def get_object_objectinfo_rule_map(cls: type) -> dict:
     """
     Returns the conversion mapping for ``cls``
@@ -100,6 +103,7 @@ def get_object_objectinfo_rule_map(cls: type) -> dict:
 
 
 @extendable
+@doc_category("Conversion")
 class ObjectInfo(Generic[TClass]):
     """
     A GUI object that represents real objects.
@@ -175,6 +179,7 @@ class ObjectInfo(Generic[TClass]):
 
 
 @cache_result(max=1024)
+@doc_category("Conversion")
 def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
     """
     Converts ObjectInfo objects into equivalent Python code.
@@ -223,6 +228,7 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
 
 @extendable
 @cache_result(16_384)
+@doc_category("Conversion")
 def convert_to_object_info(object_: object, **kwargs):
     """
     Converts an object into ObjectInfo.
@@ -291,6 +297,7 @@ def _convert_to_objects_cached(*args, **kwargs):
     return convert_to_objects(*args, **kwargs)
 
 
+@doc_category("Conversion")
 def convert_to_objects(
     d: Union[ObjectInfo, dict, list],
 ) -> Union[object, dict, List]:
@@ -328,6 +335,7 @@ def convert_to_objects(
 
 
 @cache_result()
+@doc_category("Conversion")
 def convert_to_dict(d: Union[ObjectInfo, List[ObjectInfo], Any]):
     """
     Converts ObjectInfo into dictionary representation.
@@ -345,7 +353,9 @@ def convert_to_dict(d: Union[ObjectInfo, List[ObjectInfo], Any]):
     return d
 
 
+
 @cache_result()
+@doc_category("Conversion")
 def convert_from_dict(d: Union[dict, List[dict], Any]) -> ObjectInfo:
     """
     Converts previously converted dict back to ObjectInfo.
