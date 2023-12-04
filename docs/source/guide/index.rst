@@ -9,3 +9,4 @@ Index:
 .. toctree::
 
     firststeps
+    struct_frame

@@ -12,7 +12,7 @@ values.
 The :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame` method accepts the following
 parameters:
 
-- class_: This is the class or a function that we want the parameters for.
+- class\ _: This is the class or a function that we want the parameters for.
 - return_widget: This is a widget that receives the value after saving the newly defined parameters.
 - old_data: The old_data gui data.
 - check_parameters: Boolean parameter, which if True will not test if the object parameters are correct. When
@@ -103,9 +103,18 @@ Afterwards we define 2 functions, the first one will open the definition window,
 convert the abstract ``Car`` object into a real Python object.
 
 Function ``make_car`` accepts a parameter ``old``, which will be later used to edit the existing object after we defined it.
-But since it is not defined yet, this is currently irrelevant. The following lines in the function create the
+But since it is not defined yet, this is currently irrelevant. Next lines of code in the function create the
 :class:`~tkclasswiz.object_frame.window.ObjectEditWindow` definition window and load in the definition frame by calling
 the :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame`, which we pass
 the class of an object we want to define (``Car``), the return widget (``combo``) that receives the defined object and
 the ``old_data`` parameter which would load in previously defined values (which currently don't exist).
 
+At the very bottom of the example, we define a few buttons:
+
+- 'Define Car': Calls ``make_car`` function, opening the object definition window.
+- 'Edit Car': Calls ``make_car`` function, opening the object definition window and loading in the already defined
+  :class:`tkclasswiz.convert.ObjectInfo` abstract ``Car`` object.
+- 'Print defined': Calls ``print_defined`` function which converts the abstract object into a real one and prints it out,
+  including its type.
+
+Now let's take a look at how our example looks :ref:`inside a GUI <Object frame for structured data>`.

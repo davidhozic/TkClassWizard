@@ -81,9 +81,9 @@ class ObjectEditWindow(tk.Toplevel):
         self,
         class_,
         return_widget,
-        old_data,
-        check_parameters: bool,
-        allow_save: bool,
+        old_data = None,
+        check_parameters: bool = True,
+        allow_save: bool = True,
         **kwargs
     ):
         """
