@@ -37,13 +37,6 @@ It's best we take a look at an example.
 
     class Car:
         def __init__(self, name: str, speed: float, wheels: list[Wheel]):
-
-            if len(wheels) != 4:
-                raise ValueError("The car must have 4 wheels")
-            
-            if not isinstance(wheels[0], Wheel):
-                raise TypeError("The 'wheels' parameter must be of type Wheel")
-
             self.name = name
             self.speed = speed
             self.wheels = wheels
