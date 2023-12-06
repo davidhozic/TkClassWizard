@@ -29,7 +29,7 @@ At the very top row we have 3 buttons:
   If we were to change anything inside the frame, this button would first ask us if we want to save our changes.
 - "Save": As the name suggests, this button will save all the defined data into the return widget, that was passed as
   parameter to the :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame` method, which in
-  our case was :class:`~tkclasswiz.storage.ComboBoxObjects` the held by the ``combo`` variable.
+  our case was :class:`~tkclasswiz.storage.ComboBoxObjects` held by the ``combo`` variable.
   Finally the definition frame will be closed.
 - "Keel on top": This button will keep the entire window on top of other windows, even if you clicked
   away. You can imagine it as a pin (on top) button.
@@ -56,7 +56,7 @@ The next item on the right is a Combobox (:class:`~tkclasswiz.storage.ComboBoxOb
 which is a dropdown menu used for storing the value of each defined parameter.
 This dropdown menu can contain multiple values while we are still editing,
 which we can access through the down arrow-like symbol located on the rightmost side of the Combobox.
-When the definition frame is closed, all other values that were not selected inside the Combobox get discarded.
+When the definition frame is closed all the other values that were not selected inside the Combobox get discarded.
 The dropdown menu is followed by 3 buttons:
 
 - "New": is a dropdown menu button, which allows to define multiple data types that the parameter accepts. It can

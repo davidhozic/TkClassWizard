@@ -79,7 +79,7 @@ The ``Wheel`` class accepts a single parameter annotated with the ``float`` type
 that all the parameters are annotated, else they will not be displayed when defining parameters through the GUI.
 
 The ``Car`` class accepts parameters ``name`` of type ``str``, ``speed`` of type ``float`` and list of ``wheels`` 
-f type ``Wheel``. From the ``wheels`` parameter we can see that we can define multiple nested objects as well.
+of type ``Wheel``. From the ``wheels`` parameter we can see that we can define multiple nested objects as well.
 
 Then we create an instance of ``Tk``, which is just the standard way for creating a tkinter app.
 
