@@ -83,6 +83,7 @@ def register_annotations(cls: type, mapping: Optional[dict] = {}, **annotations)
     ADDITIONAL_ANNOTATIONS[cls].update(**annotations, **mapping)
 
 
+@doc_category("Annotations")
 def get_annotations(class_) -> dict:
     """
     Returns class / function annotations including the ones extended with ``register_annotations``.
