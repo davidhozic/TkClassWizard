@@ -12,6 +12,7 @@ from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
 from ..annotations import get_annotations
+from ..doc import doc_category
 
 from .frame_base import *
 
@@ -31,6 +32,7 @@ __all__ = (
 
 
 @extendable
+@doc_category("Object frames")
 class NewObjectFrameStruct(NewObjectFrameBase):
     """
     Frame for inside the :class:`ObjectEditWindow` that allows object definition.
@@ -85,7 +87,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             if filename == "":
                 return
 
-            json_data = convert_to_json(self.to_object(ignore_checks=True))
+            json_data = convert_to_dict(self.to_object(ignore_checks=True))
 
             if not filename.endswith(".json"):
                 filename += ".json"
@@ -103,7 +105,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
             with open(filename, "r", encoding="utf-8") as file:
                 json_data: dict = json.loads(file.read())
-                object_info = convert_from_json(json_data)
+                object_info = convert_from_dict(json_data)
                 # Get class_ attribute if we have the ObjectInfo type, if not just compare the actual type
                 if object_info.class_ is not self.class_:
                     raise TypeError(
@@ -244,7 +246,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         object_ = ObjectInfo(self.class_, map_)  # Abstraction of the underlaying object
         if not ignore_checks and self.check_parameters and inspect.isclass(self.class_):  # Only check objects
             # Cache the object created for faster
-            convert_to_objects(object_, cached=True)  # Tries to create instances to check for errors
+            _convert_to_objects_cached(object_)  # Tries to create instances to check for errors
 
         return object_
 

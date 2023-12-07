@@ -6,6 +6,7 @@ from typing import Union, Any, List, Iterable, Callable
 from .utilities import gui_confirm_action
 from .messagebox import Messagebox
 from .convert import ObjectInfo
+from .doc import doc_category
 
 import tkinter.ttk as ttk
 import tkinter as tk
@@ -28,6 +29,7 @@ class GLOBAL:
     clipboard = _NoClipBoard
 
 
+@doc_category("Storage widgets")
 class Text(tk.Text):
     """
     Modified version of :class`tkinter.Text`, which replaces the original
@@ -39,6 +41,7 @@ class Text(tk.Text):
         return super().get("1.0", tk.END).strip()
 
 
+@doc_category("Storage widgets")
 class ListBoxObjects(tk.Listbox):
     """
     Modified version of :class:`tkinter.Listbox`, which:
@@ -72,7 +75,7 @@ class ListBoxObjects(tk.Listbox):
 
     def insert(self, index: Union[str, int], *elements: Union[str, float]) -> None:
         """
-        Inserts ``elements`` to ``index``. The ``index must be a numerical index or tkinter.END ('end').
+        Inserts ``elements`` to ``index``. The ``index`` must be a numerical index or tkinter.END ('end').
         """
         _ret = super().insert(index, *elements)
         if isinstance(index, str):
@@ -190,6 +193,7 @@ class ListBoxObjects(tk.Listbox):
             Messagebox.show_error("Selection error", "Select ONE item!", parent=self)
 
 
+@doc_category("Storage widgets")
 class ListBoxScrolled(ttk.Frame):
     """
     A scrollable version of :class:`tkclasswiz.storage.ListBoxObjects`.
@@ -216,6 +220,7 @@ class ListBoxScrolled(ttk.Frame):
         return getattr(self.listbox, name)
 
 
+@doc_category("Storage widgets")
 class ComboBoxObjects(ttk.Combobox):
     """
     Modified version of :class:`tkinter.Combobox`, which:
@@ -290,6 +295,7 @@ class ComboBoxObjects(ttk.Combobox):
         return super().__getitem__(key)
 
 
+@doc_category("Storage widgets")
 class ComboEditFrame(ttk.Frame):
     """
     Frame, which combines :class:`tkclasswiz.storage.ComboBoxObjects` and an edit button.

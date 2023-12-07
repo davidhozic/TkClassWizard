@@ -6,6 +6,7 @@ from functools import wraps
 
 import importlib
 from .messagebox import Messagebox
+from .doc import doc_category, DOCUMENTATION_MODE
 
 
 __all__ = (
@@ -16,6 +17,7 @@ __all__ = (
 )
 
 
+@doc_category("Utilities")
 def import_class(path: str) -> type:
     """
     Imports the class provided by it's ``path``.
@@ -32,6 +34,7 @@ def import_class(path: str) -> type:
     return class_
 
 
+@doc_category("Utilities")
 def gui_except(window = None):
     """
     Function that returns a decorator.
@@ -59,6 +62,9 @@ def gui_except(window = None):
                 raise ValueError("Test")
     """
     def decorator(fnc: Callable):
+        if DOCUMENTATION_MODE:
+            return fnc
+
         @wraps(fnc, updated=[])
         class wrapper:
             def __init__(self, instance = None) -> None:
@@ -82,6 +88,7 @@ def gui_except(window = None):
     return decorator
 
 
+@doc_category("Utilities")
 def gui_confirm_action(parent = None):
     """
     Function that returns a decorator.
@@ -108,6 +115,9 @@ def gui_confirm_action(parent = None):
                 print("Deleting database")
     """
     def _gui_confirm_action(fnc: Callable):
+        if DOCUMENTATION_MODE:
+            return fnc
+
         class wrapper:
             def __init__(self, bind = None) -> None:
                 self.bind = bind
@@ -129,6 +139,7 @@ def gui_confirm_action(parent = None):
     return _gui_confirm_action
 
 
+@doc_category("Utilities")
 def issubclass_noexcept(cls: type, bases: Tuple[type]):
     """
     Same as :func:`inspect.issubclass`, but instead of raising an exception
