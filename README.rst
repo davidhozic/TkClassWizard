@@ -27,7 +27,7 @@ Pre-requirement: `Python (minimum v3.8) <https://www.python.org/downloads/>`_
 Example
 ----------------------
 
-.. image:: guide/images/new_define_frame_struct_new_str.png
+.. image:: docs/source/guide/images/new_define_frame_struct_new_str.png
     :width: 15cm
 
 .. code-block:: python
