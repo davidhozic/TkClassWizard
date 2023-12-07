@@ -21,8 +21,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-license = "MIT"
-
 dynamic = ["optional-dependencies", "version"]
 
 
