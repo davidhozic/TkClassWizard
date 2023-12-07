@@ -31,8 +31,6 @@ Example
     :width: 15cm
 
 .. code-block:: python
-    :linenos:
-    :emphasize-lines: 11-15, 31-32
 
     import tkinter as tk
     import tkinter.ttk as ttk
