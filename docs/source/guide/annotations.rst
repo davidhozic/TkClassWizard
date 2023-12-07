@@ -36,4 +36,5 @@ For convenience :class:`datetime.datetime`, :class:`datetime.timedelta` and :cla
 have these annotations registered.
 
 To obtain a mapping of registered annotations, :func:`~tkclasswiz.annotations.get_annotations` can be used.
-
+It returns a dictionary mapping parameter to the data type for both code defined annotations and annotations defined
+with :func:`~tkclasswiz.annotations.register_annotations`.
