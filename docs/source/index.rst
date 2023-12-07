@@ -89,4 +89,5 @@ Table of contents
 
     guide/index
     reference/index
+    changelog
 
