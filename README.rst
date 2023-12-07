@@ -10,6 +10,7 @@ Links
 ---------------------
 - `Releases <https://github.com/davidhozic/TkClassWizard/releases>`_
 - Need help? Contact me in my `Discord server <https://discord.gg/DEnvahb2Sw>`_.
+- `Documentation <https://tkclasswizard.readthedocs.io/>`_
 
 ----------------------
 Installation
