@@ -24,6 +24,13 @@ Glossary
 Releases
 ---------------------
 
+v1.0.1
+=================
+- Fixed a bug where the window didn't close and couldn't be closed
+  if an exception was raised when trying to define a class without annotations, and there
+  were no previously opened frames.
+
+
 v1.0.0
 =================
 - Initial release
