@@ -76,7 +76,6 @@ class ObjectEditWindow(tk.Toplevel):
     def closed(self) -> bool:
         return self._closed
 
-    @gui_except()
     def open_object_edit_frame(
         self,
         class_,
@@ -104,16 +103,26 @@ class ObjectEditWindow(tk.Toplevel):
         allow_save: bool
             If False, will open in read-only mode.
         """
-        if len(self.opened_frames):
-            prev_frame = self.opened_frames[-1]
-        else:
-            prev_frame = None
+        frame = self._create_and_add_frame(class_, return_widget, old_data, check_parameters, allow_save, kwargs)
+        if frame is None and not self.opened_frames:
+            self.destroy()
+            self._closed = True
 
+    @gui_except()
+    def _create_and_add_frame(
+        self,
+        class_: type,
+        return_widget,
+        old_data,
+        check_parameters: bool,
+        allow_save: bool,
+        kwargs
+    ):
+        frame: NewObjectFrameBase
         class_origin = get_origin(class_)
         if class_origin is None:
             class_origin = class_
 
-        frame: NewObjectFrameBase
         frame_class = self.TYPE_INIT_MAP.get(class_origin, NewObjectFrameStruct)
         self.opened_frames.append(
             frame := frame_class(
@@ -126,12 +135,15 @@ class ObjectEditWindow(tk.Toplevel):
                 **kwargs
             )
         )
+
+        if len(self.opened_frames) > 1:
+            self.opened_frames[-2].pack_forget()
+
         frame.pack(fill=tk.BOTH, expand=True)
         frame.update_window_title()
-        if prev_frame is not None:
-            prev_frame.pack_forget()
-
         self.set_default_size_y()
+
+        return frame
 
     def close_object_edit_frame(self):
         self.opened_frames[-1].close_frame()
