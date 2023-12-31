@@ -31,6 +31,7 @@ v1.1.0
 - :ref:`Polymorphism` support
 
 
+
 v1.0.1
 =================
 - Fixed a bug where the window didn't close and couldn't be closed

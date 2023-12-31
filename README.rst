@@ -10,11 +10,12 @@ Links
 ---------------------
 - `Releases <https://github.com/davidhozic/TkClassWizard/releases>`_
 - Need help? Contact me in my `Discord server <https://discord.gg/DEnvahb2Sw>`_.
+- `Documentation <https://tkclasswizard.readthedocs.io/>`_
 
 ----------------------
 Installation
 ----------------------
-DAF can be installed though command prompt/terminal using the bottom commands.
+TkClassWizard can be installed though command prompt/terminal using the bottom commands.
         
 Pre-requirement: `Python (minimum v3.8) <https://www.python.org/downloads/>`_
 
