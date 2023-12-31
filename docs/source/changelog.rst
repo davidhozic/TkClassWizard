@@ -24,6 +24,13 @@ Glossary
 Releases
 ---------------------
 
+v1.1.0
+================
+- :ref:`Abstract classes` (those that directly inherit :class:`abc.ABC`) are no longer
+  definable through TkClassWizard.
+- :ref:`Polymorphism` support
+
+
 v1.0.1
 =================
 - Fixed a bug where the window didn't close and couldn't be closed
