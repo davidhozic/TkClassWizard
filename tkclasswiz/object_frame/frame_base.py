@@ -1,4 +1,5 @@
 from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar
+from abc import ABC
 from contextlib import suppress
 
 from ..convert import *
@@ -11,6 +12,7 @@ from ..doc import doc_category
 
 import tkinter.ttk as ttk
 import tkinter as tk
+import json
 
 
 if TYPE_CHECKING:
@@ -116,7 +118,7 @@ class NewObjectFrameBase(ttk.Frame):
         """
 
         CAST_FUNTIONS = {
-            # dict: lambda v: convert_dict_to_object_info(json.loads(v))
+            dict: lambda v: convert_to_object_info(json.loads(v))
         }
 
         # Validate literals
@@ -141,13 +143,25 @@ class NewObjectFrameBase(ttk.Frame):
 
     @classmethod
     def convert_types(cls, types_in):
-        def remove_wrapped(types: list):
+        """
+        Type preprocessing method, that extends the list of types with inherited members (polymorphism)
+        and removes classes that are wrapped by some other class, if the wrapper class also appears in
+        the annotations.
+        """
+        def remove_classes(types: list):
             r = types.copy()
             for type_ in types:
                 # It's a wrapper of some class -> remove the wrapped class
                 if hasattr(type_, "__wrapped__"):
                     if type_.__wrapped__ in r:
                         r.remove(type_.__wrapped__)
+
+                # Abstract classes are classes that don't allow instantiation -> remove the class
+                # Use the __bases__ instead of issubclass, because ABC is only supposed to denote
+                # classes abstract if they directly inherit it. In the case of multi-level inheritance
+                # issubclass would still return True, even though type_ is not a direct subclass ABC.
+                if ABC in type_.__bases__:
+                    r.remove(type_)
 
             return r
 
@@ -163,12 +177,15 @@ class NewObjectFrameBase(ttk.Frame):
         # Also include inherited objects
         subtypes = []
         for t in types_in:
-            if hasattr(t, "__subclasses__") and t.__module__.split('.', 1)[0] in {"_discord", "daf"}:
+            if cls.get_cls_name(t) in __builtins__:
+                continue  # Don't consider built-int types for polymorphism
+
+            if hasattr(t, "__subclasses__"):
                 for st in t.__subclasses__():
                     subtypes.extend(cls.convert_types(st))
 
-        # Remove wrapped classes (eg. wrapped by decorator)
-        return remove_wrapped(types_in + subtypes)
+        # Remove wrapped classes (eg. wrapped by decorator) + ABC classes
+        return remove_classes(types_in + subtypes)
 
     def init_main_frame(self):
         frame_main = ttk.Frame(self)
