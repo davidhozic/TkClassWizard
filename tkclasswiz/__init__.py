@@ -3,7 +3,7 @@ TkClassWizard - Library for graphically defining objects based on class annotati
 Works with Tkinter / TTKBootstrap.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 from .object_frame import *
 from .annotations import *
