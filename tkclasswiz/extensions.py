@@ -1,6 +1,6 @@
 """
 Module used to add extensions to add extensions
-to TOD.
+to TkClassWizard.
 """
 from typing import Callable, TypeVar, Union
 from inspect import isclass

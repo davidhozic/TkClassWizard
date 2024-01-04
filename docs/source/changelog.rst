@@ -24,12 +24,18 @@ Glossary
 Releases
 ---------------------
 
+
+v1.1.1
+================
+- Fixed template export on view-only mode, where the template exported wrong type.
+- Fixed abstract classes, defined with ``__metaclass__ = ABCMeta``, not being treated as abstract.  
+
+
 v1.1.0
 ================
 - :ref:`Abstract classes` (those that directly inherit :class:`abc.ABC`) are no longer
   definable through TkClassWizard.
 - :ref:`Polymorphism` support
-
 
 
 v1.0.1

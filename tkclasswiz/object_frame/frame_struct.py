@@ -72,12 +72,13 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         check_parameters: bool = True,
         allow_save = True,
         additional_values: dict = {},
+        _annotations_override: dict = None,
     ):
         super().__init__(class_, return_widget, parent, old_data, check_parameters,allow_save)
         self._map: Dict[str, Tuple[ComboBoxObjects, Iterable[type]]] = {}
         dpi_5 = dpi_scaled(5)
 
-        if not (annotations := get_annotations(class_)):
+        if not (annotations := _annotations_override or get_annotations(class_)):
             raise TypeError("This object cannot be edited.")
 
         # Template
@@ -297,15 +298,9 @@ class NewObjectFrameStructView(NewObjectFrameStruct):
     get mapped as annotations, which the :class:`NewObjectFrameStruct` knows how to handle.
     """
     def __init__(self, class_, *args, **kwargs):
-        class Viewer:
-            def __init__(self) -> None:
-                pass
-
-        Viewer.__name__ = class_.__name__
-
         old_data: ObjectInfo = kwargs["old_data"]
-        Viewer.__init__.__annotations__ = {k: v.class_ if isinstance(v, ObjectInfo) else type(v) for k, v in old_data.data.items()}
-        super().__init__(Viewer, *args, **kwargs)
+        annotations = {k: v.class_ if isinstance(v, ObjectInfo) else type(v) for k, v in old_data.data.items()}
+        super().__init__(class_, *args, **kwargs, _annotations_override=annotations)
 
     @gui_except()
     def _edit_selected(self, key: str, combo: ComboBoxObjects):
@@ -322,5 +317,3 @@ class NewObjectFrameStructView(NewObjectFrameStruct):
             return self.new_object_frame(selection.class_, combo, old_data=selection)
         else:
             return self.new_object_frame(type(selection), combo, old_data=selection)
-
-
