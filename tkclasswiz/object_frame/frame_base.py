@@ -1,5 +1,6 @@
 from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar
 from abc import ABC
+from inspect import isabstract
 from contextlib import suppress
 
 from ..convert import *
@@ -157,10 +158,7 @@ class NewObjectFrameBase(ttk.Frame):
                         r.remove(type_.__wrapped__)
 
                 # Abstract classes are classes that don't allow instantiation -> remove the class
-                # Use the __bases__ instead of issubclass, because ABC is only supposed to denote
-                # classes abstract if they directly inherit it. In the case of multi-level inheritance
-                # issubclass would still return True, even though type_ is not a direct subclass ABC.
-                if ABC in type_.__bases__:
+                if isabstract(type_):
                     r.remove(type_)
 
             return r
