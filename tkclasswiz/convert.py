@@ -119,6 +119,9 @@ class ObjectInfo(Generic[TClass]):
         Real object's type.
     data: dict
         Dictionary mapping to real object's parameters
+    nickname: Optional[str]
+        Add a nickname to the defined object for easier
+        recognition.
     """
     CHARACTER_LIMIT = 150
 
@@ -126,9 +129,11 @@ class ObjectInfo(Generic[TClass]):
         self,
         class_,
         data: Mapping,
+        nickname: Optional[str] = None,
     ) -> None:
         self.class_ = class_
         self.data = data
+        self.nickname = nickname
         self.__hash = 0
         self.__repr = None
 
@@ -152,7 +157,11 @@ class ObjectInfo(Generic[TClass]):
         if self.__repr is not None:
             return self.__repr
 
-        _ret: str = self.class_.__name__ + "("
+        _ret: str = ""
+        if self.nickname:
+            _ret += f"({self.nickname}) "
+
+        _ret += self.class_.__name__ + "("
         private_params = set()
         if hasattr(self.class_, "__passwords__"):
             private_params = private_params.union(self.class_.__passwords__)
@@ -343,7 +352,7 @@ def convert_to_dict(d: Union[ObjectInfo, List[ObjectInfo], Any]):
     """
     if isinstance(d, ObjectInfo):
         data_conv = {k: convert_to_dict(v) for k, v in d.data.items()}
-        return {"type": f"{d.class_.__module__}.{d.class_.__name__}", "data": data_conv}
+        return {"type": f"{d.class_.__module__}.{d.class_.__name__}", "data": data_conv, "nickname": d.nickname}
 
     if isinstance(d, list):
         return [convert_to_dict(x) for x in d]
@@ -379,6 +388,6 @@ def convert_from_dict(d: Union[dict, List[dict], Any]) -> ObjectInfo:
             else:
                 warnings.warn(f"Parameter {k} does not exist in {type_}, ignoring.")
 
-        return ObjectInfo(type_, data)
+        return ObjectInfo(type_, data, d.get('nickname'))
 
     return d

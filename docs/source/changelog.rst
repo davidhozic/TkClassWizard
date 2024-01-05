@@ -24,6 +24,10 @@ Glossary
 Releases
 ---------------------
 
+v1.2.0
+================
+- Added the ability of nicknaming structured objects.
+
 
 v1.1.1
 ================
