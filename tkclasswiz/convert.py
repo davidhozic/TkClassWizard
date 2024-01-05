@@ -157,7 +157,11 @@ class ObjectInfo(Generic[TClass]):
         if self.__repr is not None:
             return self.__repr
 
-        _ret: str = self.class_.__name__ + "("
+        _ret: str = ""
+        if self.nickname:
+            _ret += f"({self.nickname}) "
+
+        _ret += self.class_.__name__ + "("
         private_params = set()
         if hasattr(self.class_, "__passwords__"):
             private_params = private_params.union(self.class_.__passwords__)

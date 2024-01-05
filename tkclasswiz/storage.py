@@ -49,13 +49,16 @@ class HintedEntry(ttk.Entry):
             return ''
 
         return super().get()
-    
+
     def insert(self, *args, **kwargs) -> None:
+        state = self.cget("state")
+        self.config(state="enabled")
         if str(self["foreground"]) == "gray":
             self.delete('0', tk.END)
 
         _ret = super().insert(*args, **kwargs)
         self["foreground"] = "black"
+        self.config(state=state)
         return _ret
 
     def _set_hint(self):

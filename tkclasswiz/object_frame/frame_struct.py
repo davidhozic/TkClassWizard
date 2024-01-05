@@ -15,7 +15,7 @@ from ..annotations import get_annotations
 from ..doc import doc_category
 
 from .frame_base import *
-from .tooltip import NicknameTooltip
+from .tooltip import ComboboxTooltip
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -126,7 +126,11 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         bnt_menu_template.pack(side="left")
 
         # Nickname entry
-        self.entry_nick = HintedEntry("Object nickname", self.frame_main)
+        self.entry_nick = HintedEntry(
+            "Object nickname",
+            self.frame_main,
+            state="normal" if self.allow_save else "disabled"
+        )
         self.entry_nick.pack(anchor=tk.W, padx=dpi_5_h, pady=dpi_5)
 
         def fill_values(k: str, entry_types: list, menu: tk.Menu, combo: ComboBoxObjects):
@@ -179,7 +183,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             # Storage widget with the tooltip for displaying
             # nicknames on ObjectInfo instances
             w = combo = ComboBoxObjects(frame_annotated)
-            NicknameTooltip(w, "<Enter>", "<Leave>")
+            ComboboxTooltip(w)
 
             # Fill values
             any_filled = fill_values(k, entry_types, menu_new, combo)

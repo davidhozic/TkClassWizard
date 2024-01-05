@@ -10,7 +10,7 @@ from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
 from .frame_base import *
-from .tooltip import NicknameTooltip
+from .tooltip import ListboxTooltip
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -67,7 +67,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         dpi_5 = dpi_scaled(5)
         super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
-        NicknameTooltip(self.storage_widget, "<<ListboxSelect>>", "<Leave>", 0)
+        ListboxTooltip(self.storage_widget, 0)
 
         frame_edit_remove = ttk.Frame(self.frame_main, padding=(dpi_5, 0))
         frame_edit_remove.pack(side="right")
@@ -134,7 +134,7 @@ class NewObjectFrameIterableView(NewObjectFrameIterable):
         dpi_5 = dpi_scaled(5)
         super(NewObjectFrameBase, self).__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
-        NicknameTooltip(self.storage_widget, "<<ListboxSelect>>", "<Leave>", 0)
+        ListboxTooltip(self.storage_widget, 0)
 
         frame_edit_remove = ttk.Frame(self.frame_main, padding=(dpi_5, 0))
         frame_edit_remove.pack(side="right")
