@@ -4,6 +4,7 @@ from inspect import isabstract
 from contextlib import suppress
 
 from ..convert import *
+from ..aliasing import *
 from ..dpi import *
 from ..utilities import *
 from ..storage import *
@@ -95,13 +96,26 @@ class NewObjectFrameBase(ttk.Frame):
         """
         Returns the name of the class ``cls`` or
         the original class when the name cannot be obtained.
+        If alias exists, alias is returned instead.
+        """
+        unaliased = NewObjectFrameBase._get_cls_unaliased_name(cls)
+        if (alias := get_aliased_name(cls)) is not None:
+            return alias + f"<{unaliased}>"
+        
+        return unaliased
+
+    @staticmethod
+    def _get_cls_unaliased_name(cls: T) -> Union[str, T]:
+        """
+        Returns the name of the class ``cls`` or
+        the original class when the name cannot be obtained.
         """
         if hasattr(cls, "_name"):
             return cls._name
         if hasattr(cls, "__name__"):
             return cls.__name__
-        else:
-            return cls
+
+        return cls
 
     @classmethod
     def set_origin_window(cls, window: "ObjectEditWindow"):
@@ -129,7 +143,7 @@ class NewObjectFrameBase(ttk.Frame):
             
             return value
 
-        for type_ in filter(lambda t: cls.get_cls_name(t) in __builtins__, types):
+        for type_ in filter(lambda t: cls._get_cls_unaliased_name(t) in __builtins__, types):
             with suppress(Exception):
                 cast_funct = CAST_FUNTIONS.get(type_)
                 if cast_funct is None:
