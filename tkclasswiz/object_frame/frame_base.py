@@ -98,11 +98,11 @@ class NewObjectFrameBase(ttk.Frame):
         the original class when the name cannot be obtained.
         If alias exists, alias is returned instead.
         """
-        unaliased = NewObjectFrameBase._get_cls_unaliased_name(cls)
+        name = NewObjectFrameBase._get_cls_unaliased_name(cls)
         if (alias := get_aliased_name(cls)) is not None:
-            return alias + f"<{unaliased}>"
+            return alias + f" /{name}"
         
-        return unaliased
+        return name
 
     @staticmethod
     def _get_cls_unaliased_name(cls: T) -> Union[str, T]:
