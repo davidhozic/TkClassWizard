@@ -100,7 +100,7 @@ def get_annotations(class_) -> dict:
         elif isclass(origin_class := get_origin(class_)) and issubclass(origin_class, Generic):
             # Resolve generics
             annotations = origin_class.__init__.__annotations__.copy()
-            generic_types = [x for x in get_args(origin_class.__orig_bases__[0])]
+            generic_types = get_args(origin_class.__orig_bases__[0])
             generic_values = get_args(class_)
             generic_name_value = {generic_types[i]: generic_values[i] for i in range(len(generic_types))}
             for k, v in annotations.items():
