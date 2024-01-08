@@ -96,10 +96,10 @@ class NewObjectFrameBase(ttk.Frame):
         Returns the name of the class ``cls`` or
         the original class when the name cannot be obtained.
         """
-        if hasattr(cls, "_name"):
-            return cls._name
         if hasattr(cls, "__name__"):
             return cls.__name__
+        if hasattr(cls, "_name"):
+            return cls._name
         else:
             return cls
 
