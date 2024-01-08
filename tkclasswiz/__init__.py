@@ -13,3 +13,4 @@ from .extensions import *
 from .messagebox import *
 from .storage import *
 from .utilities import *
+from .aliasing import *
