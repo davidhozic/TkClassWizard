@@ -136,7 +136,7 @@ class ObjectInfo(Generic[TClass]):
         self.data = data
         self.nickname = nickname
         self.__hash = 0
-        self.__repr = None
+        self._repr = None
 
     @extendable
     def __eq__(self, _value: object) -> bool:
@@ -155,14 +155,13 @@ class ObjectInfo(Generic[TClass]):
         return self.__hash
 
     def __repr__(self) -> str:
-        if self.__repr is not None:
-            return self.__repr
+        if self._repr is not None:
+            return self._repr
 
         _ret: List[str] = []
         if self.nickname:
             _ret += f"({self.nickname}) "
 
-        _ret += self.class_.__name__ + "("
         name = get_aliased_name(self.class_)
         if name is not None:
             name += f'({self.class_.__name__})'
@@ -193,7 +192,7 @@ class ObjectInfo(Generic[TClass]):
         if len(_ret) > self.CHARACTER_LIMIT:
             _ret = _ret[:self.CHARACTER_LIMIT] + "...)"
 
-        self.__repr = _ret
+        self._repr = _ret
         return _ret
 
 
