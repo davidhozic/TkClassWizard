@@ -261,7 +261,11 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
         nickname = self.entry_nick.get() or None
         object_ = ObjectInfo(self.class_, map_, nickname)  # Abstraction of the underlaying object
-        if not ignore_checks and self.check_parameters and inspect.isclass(self.class_):  # Only check objects
+        if (
+            not ignore_checks and
+            self.check_parameters and
+            (inspect.isclass(self.class_) or inspect.isclass(get_origin(self.class_)))  # Only check objects
+        ):
             # Cache the object created for faster
             _convert_to_objects_cached(object_)  # Tries to create instances to check for errors
 

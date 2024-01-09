@@ -11,6 +11,7 @@ from .utilities import import_class
 from .extensions import extendable
 from .cache import cache_result
 from .annotations import *
+from .aliasing import *
 from .doc import doc_category
 
 import datetime as dt
@@ -157,11 +158,18 @@ class ObjectInfo(Generic[TClass]):
         if self.__repr is not None:
             return self.__repr
 
-        _ret: str = ""
+        _ret: List[str] = []
         if self.nickname:
             _ret += f"({self.nickname}) "
 
         _ret += self.class_.__name__ + "("
+        name = get_aliased_name(self.class_)
+        if name is not None:
+            name += f'({self.class_.__name__})'
+        else:
+            name = self.class_.__name__
+
+        _ret +=  name + "("
         private_params = set()
         if hasattr(self.class_, "__passwords__"):
             private_params = private_params.union(self.class_.__passwords__)
@@ -180,6 +188,7 @@ class ObjectInfo(Generic[TClass]):
 
             _ret += f"{k}={v}, "
 
+        _ret: str = ''.join(_ret)
         _ret = _ret.rstrip(", ") + ")"
         if len(_ret) > self.CHARACTER_LIMIT:
             _ret = _ret[:self.CHARACTER_LIMIT] + "...)"

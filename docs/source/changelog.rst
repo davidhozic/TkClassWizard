@@ -27,6 +27,9 @@ Releases
 v1.2.0
 ================
 - Added the ability of nicknaming structured objects.
+- Generic types support (Parametric types)
+- :ref:`Type aliasing`
+- |BREAK_CH| Minimal Python version bumped to Python 3.9
 
 
 v1.1.1
