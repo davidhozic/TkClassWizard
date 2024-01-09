@@ -44,7 +44,22 @@ load them from a JSON file back into the GUI.
     For verification purposes, the JSON file contains the full path to the defining class.
     Changing the class path requires users to update the corresponding path within the JSON files as well.
 
-Going down further we can see multiple rows, each one of the corresponding to a parameter.
+Below the "Template" button, an entry labeled "Object nickname" is located.
+This entry can be used to give an object a nickname.
+The nickname will be displayed before the class's name,
+allowing the object to be easily recognized at a glance.
+
+.. image:: ./images/new_define_frame_struct_nickname.png
+  :width: 15cm
+
+This is how the object will look inside a Combobox, if it is given the name "David's car"
+(notice the parentheses at the beginning):
+
+.. image:: ./images/example_gui_view_defined_nickname_car.png
+  :width: 15cm
+
+
+Going down further we can see multiple rows, each one of them corresponding to a parameter.
 
 .. image:: ./images/new_define_frame_struct_parameters.png
     :width: 15cm
@@ -55,7 +70,32 @@ The next item on the right is a Combobox (:class:`~tkclasswiz.storage.ComboBoxOb
 which is a dropdown menu used for storing the value of each defined parameter.
 This dropdown menu can contain multiple values while we are still editing,
 which we can access through the down arrow-like symbol located on the rightmost side of the Combobox.
-When the definition frame is closed all the other values that were not selected inside the Combobox get discarded.
+When the definition frame is closed, all the other (not selected) values get discarded.
+
+
+.. note::
+
+  While the dropdown menu (Combobox) can contains values manually defined through the GUI,
+  it will sometimes have some predefined values. These values can be:
+
+  - None: Parameter was annotated with :class:`typing.Optional` (``Optional[<type>]``) or
+    with :class:`typing.Union` (``Union[None, ...]``)
+  - ``True`` and ``False``: Parameter is a boolean parameter
+  - Literal string values: Parameter is a literal string, meaning it is annotated with
+    :class:`typing.Literal`. E. g, ``Literal['value1', 'value2', ...]`` annotation will produce the values 'value1' and
+    'value2' inside the Combobox.
+
+
+    .. code-block:: python
+
+      class Person:
+        def __init__(self, name: str, job_type: Literal["Science", "Technology", "Engineering", "Math"]):
+            ...
+
+    .. image:: ./images/new_define_frame_struct_literal_values.png
+      :width: 15cm
+
+
 The dropdown menu is followed by 3 buttons:
 
 - "New": is a dropdown menu button, which allows to define multiple data types that the parameter accepts. It can
