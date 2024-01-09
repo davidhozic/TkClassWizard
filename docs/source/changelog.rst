@@ -30,6 +30,7 @@ v1.2.0
 - Generic types support (Parametric types)
 - :ref:`Type aliasing`
 - Object nicknaming
+- Tooltip when hovering over fields, which shows the full value.
 - |BREAK_CH| Minimal Python version bumped to Python 3.9
 
 
