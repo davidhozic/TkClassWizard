@@ -27,6 +27,7 @@ Releases
 v1.2
 ================
 - Generic types support (Parametric types)
+- :ref:`Type aliasing`
 
 v1.1.1
 ================

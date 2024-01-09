@@ -100,7 +100,7 @@ class NewObjectFrameBase(ttk.Frame):
         """
         name = NewObjectFrameBase._get_cls_unaliased_name(cls)
         if (alias := get_aliased_name(cls)) is not None:
-            return alias + f" /{name}"
+            return alias + f" ({name})"
         
         return name
 

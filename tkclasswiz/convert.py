@@ -155,7 +155,7 @@ class ObjectInfo(Generic[TClass]):
 
         name = get_aliased_name(self.class_)
         if name is not None:
-            name += f'/{self.class_.__name__}'
+            name += f'({self.class_.__name__})'
         else:
             name = self.class_.__name__
 

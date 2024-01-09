@@ -48,7 +48,7 @@ def register_alias(cls: type, alias: str):
 @doc_category("Aliasing")
 def get_aliased_name(class_) -> Optional[str]:
     """
-    Returns the ``class_``'s aliased name. If class has no alias name, then use
-    the class's original name.
+    Returns the ``class_``'s aliased name. If class has no alias name,
+    ``None`` is returned.
     """
     return ALIASES.get(class_)

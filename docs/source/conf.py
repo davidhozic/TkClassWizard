@@ -29,8 +29,6 @@ version = __version__
 
 
 # -- General configuration ---------------------------------------------------
-root_doc = 'index'
-
 numfig = True
 
 # Add any Sphinx extension module names here, as strings. They can be
