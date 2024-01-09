@@ -2,7 +2,7 @@
 Module used for managing annotations.
 """
 from datetime import datetime, timedelta, timezone
-from typing import Union, Optional
+from typing import Union, Optional, get_args, Generic, get_origin
 from contextlib import suppress
 from inspect import isclass
 from .doc import doc_category
@@ -88,13 +88,25 @@ def get_annotations(class_) -> dict:
     """
     Returns class / function annotations including the ones extended with ``register_annotations``.
     It does not return the return annotation.
+
+    Additionally, this function resolves any generic types to their parameterized types, but
+    only for classes, functions don't support this yet as support for generics on functions was added
+    in Python 3.12.
     """
     annotations = {}
     with suppress(AttributeError):
         if isclass(class_):
-            annotations = class_.__init__.__annotations__
+            annotations = class_.__init__.__annotations__.copy()
+        elif isclass(origin_class := get_origin(class_)) and issubclass(origin_class, Generic):
+            # Resolve generics
+            annotations = origin_class.__init__.__annotations__.copy()
+            generic_types = get_args(origin_class.__orig_bases__[0])
+            generic_values = get_args(class_)
+            generic_name_value = {generic_types[i]: generic_values[i] for i in range(len(generic_types))}
+            for k, v in annotations.items():
+                annotations[k] = generic_name_value.get(v, v)
         else:
-            annotations = class_.__annotations__
+            annotations = class_.__annotations__.copy()
 
     additional_annotations = ADDITIONAL_ANNOTATIONS.get(class_, {})
     annotations = {**annotations, **additional_annotations}
