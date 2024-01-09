@@ -28,6 +28,7 @@ v1.2
 ================
 - Generic types support (Parametric types)
 - :ref:`Type aliasing`
+- |BREAK_CH| Minimal Python version bumped to Python 3.9
 
 v1.1.1
 ================
