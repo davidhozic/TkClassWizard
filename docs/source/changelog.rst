@@ -24,6 +24,9 @@ Glossary
 Releases
 ---------------------
 
+v1.2
+================
+- Generic types support (Parametric types)
 
 v1.1.1
 ================

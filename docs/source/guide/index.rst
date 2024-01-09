@@ -15,3 +15,4 @@ Index:
     conversion
     polymorphism
     abstractclasses
+    generics
