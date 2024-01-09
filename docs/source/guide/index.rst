@@ -15,4 +15,5 @@ Index:
     conversion
     polymorphism
     abstractclasses
+    aliasing
     generics

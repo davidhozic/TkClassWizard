@@ -9,7 +9,6 @@ This is how our example from the previous page looks inside a GUI:
     :width: 15cm
 
 
-
 Defining structured data (objects)
 =======================================
 
