@@ -78,7 +78,7 @@ autodoc_default_options = {
 
 # Intersphinx
 intersphinx_mapping = {
-    "Python" : ("https://docs.python.org/3/", None)
+    "python" : ("https://docs.python.org/3/", None)
 }
 
 # ----------- HTML ----------- #
