@@ -29,8 +29,6 @@ version = __version__
 
 
 # -- General configuration ---------------------------------------------------
-root_doc = 'index'
-
 numfig = True
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -80,7 +78,7 @@ autodoc_default_options = {
 
 # Intersphinx
 intersphinx_mapping = {
-    "Python" : ("https://docs.python.org/3/", None)
+    "python" : ("https://docs.python.org/3/", None)
 }
 
 # ----------- HTML ----------- #

@@ -14,9 +14,9 @@ Links
 ----------------------
 Installation
 ----------------------
-DAF can be installed though command prompt/terminal using the bottom commands.
+TkClassWizard can be installed though command prompt/terminal using the bottom commands.
         
-Pre-requirement: `Python (minimum v3.8) <https://www.python.org/downloads/>`_
+Pre-requirement: `Python (minimum v3.9) <https://www.python.org/downloads/>`_
 
 
 .. code-block:: bash

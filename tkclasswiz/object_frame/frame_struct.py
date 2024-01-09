@@ -15,6 +15,7 @@ from ..annotations import get_annotations
 from ..doc import doc_category
 
 from .frame_base import *
+from .tooltip import ComboboxTooltip
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -77,6 +78,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         super().__init__(class_, return_widget, parent, old_data, check_parameters,allow_save)
         self._map: Dict[str, Tuple[ComboBoxObjects, Iterable[type]]] = {}
         dpi_5 = dpi_scaled(5)
+        dpi_5_h = dpi_5 // 2
 
         if not (annotations := _annotations_override or get_annotations(class_)):
             raise TypeError("This object cannot be edited.")
@@ -122,6 +124,14 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         menu.add_command(label="Save template", command=save_template)
         bnt_menu_template.configure(menu=menu)
         bnt_menu_template.pack(side="left")
+
+        # Nickname entry
+        self.entry_nick = HintedEntry(
+            "Object nickname",
+            self.frame_main,
+            state="normal" if self.allow_save else "disabled"
+        )
+        self.entry_nick.pack(anchor=tk.W, padx=dpi_5_h, pady=dpi_5)
 
         def fill_values(k: str, entry_types: list, menu: tk.Menu, combo: ComboBoxObjects):
             "Fill ComboBox values based on types in ``entry_types`` and create New <object_type> buttons"
@@ -170,7 +180,10 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             menu_new = tk.Menu(bnt_new_menu)
             bnt_new_menu.configure(menu=menu_new)
 
+            # Storage widget with the tooltip for displaying
+            # nicknames on ObjectInfo instances
             w = combo = ComboBoxObjects(frame_annotated)
+            ComboboxTooltip(w)
 
             # Fill values
             any_filled = fill_values(k, entry_types, menu_new, combo)
@@ -193,7 +206,6 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             if not any_filled:
                 bnt_edit.configure(state="disabled")
 
-            dpi_5_h = dpi_5 // 2
             bnt_copy_paste.pack(side="right", padx=dpi_5_h)
             bnt_edit.pack(side="right", padx=dpi_5_h)
             bnt_new_menu.pack(side="right", padx=dpi_5_h)
@@ -218,6 +230,9 @@ class NewObjectFrameStruct(NewObjectFrameBase):
                 widget.insert(tk.END, val)
 
             widget.current(widget["values"].index(val))
+
+        if old_data.nickname:
+            self.entry_nick.insert('0', old_data.nickname)
 
         self.old_gui_data = old_data
 
@@ -244,8 +259,13 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
             map_[attr] = value
 
-        object_ = ObjectInfo(self.class_, map_)  # Abstraction of the underlaying object
-        if not ignore_checks and self.check_parameters and inspect.isclass(self.class_):  # Only check objects
+        nickname = self.entry_nick.get() or None
+        object_ = ObjectInfo(self.class_, map_, nickname)  # Abstraction of the underlaying object
+        if (
+            not ignore_checks and
+            self.check_parameters and
+            (inspect.isclass(self.class_) or inspect.isclass(get_origin(self.class_)))  # Only check objects
+        ):
             # Cache the object created for faster
             _convert_to_objects_cached(object_)  # Tries to create instances to check for errors
 

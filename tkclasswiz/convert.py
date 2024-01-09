@@ -11,6 +11,7 @@ from .utilities import import_class
 from .extensions import extendable
 from .cache import cache_result
 from .annotations import *
+from .aliasing import *
 from .doc import doc_category
 
 import datetime as dt
@@ -119,6 +120,9 @@ class ObjectInfo(Generic[TClass]):
         Real object's type.
     data: dict
         Dictionary mapping to real object's parameters
+    nickname: Optional[str]
+        Add a nickname to the defined object for easier
+        recognition.
     """
     CHARACTER_LIMIT = 150
 
@@ -126,11 +130,13 @@ class ObjectInfo(Generic[TClass]):
         self,
         class_,
         data: Mapping,
+        nickname: Optional[str] = None,
     ) -> None:
         self.class_ = class_
         self.data = data
+        self.nickname = nickname
         self.__hash = 0
-        self.__repr = None
+        self._repr = None
 
     @extendable
     def __eq__(self, _value: object) -> bool:
@@ -149,10 +155,20 @@ class ObjectInfo(Generic[TClass]):
         return self.__hash
 
     def __repr__(self) -> str:
-        if self.__repr is not None:
-            return self.__repr
+        if self._repr is not None:
+            return self._repr
 
-        _ret: str = self.class_.__name__ + "("
+        _ret: List[str] = []
+        if self.nickname:
+            _ret += f"({self.nickname}) "
+
+        name = get_aliased_name(self.class_)
+        if name is not None:
+            name += f'({self.class_.__name__})'
+        else:
+            name = self.class_.__name__
+
+        _ret +=  name + "("
         private_params = set()
         if hasattr(self.class_, "__passwords__"):
             private_params = private_params.union(self.class_.__passwords__)
@@ -171,11 +187,12 @@ class ObjectInfo(Generic[TClass]):
 
             _ret += f"{k}={v}, "
 
+        _ret: str = ''.join(_ret)
         _ret = _ret.rstrip(", ") + ")"
         if len(_ret) > self.CHARACTER_LIMIT:
             _ret = _ret[:self.CHARACTER_LIMIT] + "...)"
 
-        self.__repr = _ret
+        self._repr = _ret
         return _ret
 
 
@@ -343,7 +360,7 @@ def convert_to_dict(d: Union[ObjectInfo, List[ObjectInfo], Any]):
     """
     if isinstance(d, ObjectInfo):
         data_conv = {k: convert_to_dict(v) for k, v in d.data.items()}
-        return {"type": f"{d.class_.__module__}.{d.class_.__name__}", "data": data_conv}
+        return {"type": f"{d.class_.__module__}.{d.class_.__name__}", "data": data_conv, "nickname": d.nickname}
 
     if isinstance(d, list):
         return [convert_to_dict(x) for x in d]
@@ -379,6 +396,6 @@ def convert_from_dict(d: Union[dict, List[dict], Any]) -> ObjectInfo:
             else:
                 warnings.warn(f"Parameter {k} does not exist in {type_}, ignoring.")
 
-        return ObjectInfo(type_, data)
+        return ObjectInfo(type_, data, d.get('nickname'))
 
     return d
