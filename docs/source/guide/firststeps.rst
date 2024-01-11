@@ -5,23 +5,23 @@ First steps
 
 To define your first object parameters with TkClassWizard, you can create
 a :class:`tkinter.TopLevel` inherited object :class:`~tkclasswiz.object_frame.window.ObjectEditWindow` and then
-call its :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame` method, which
-will open up the window and then load in :class:`tkinter.Frame`, which will contain placeholders for all parameter
+call its :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame` method. This
+will open up the window and then load :class:`tkinter.Frame`, which will contain placeholders for all the parameter
 values.
 
 The :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame` method accepts the following
 parameters:
 
-- class\ _: This is the class or a function that we want the parameters for.
+- class\ _: This is the class or function that will accept our given parameters.
 - return_widget: This is a widget that receives the value after saving the newly defined parameters.
-- old_data: The old_data gui data.
-- check_parameters: Boolean parameter, which if True will not test if the object parameters are correct. When
+- old_data: The old_data GUI data.
+- check_parameters: Boolean parameter. If True, it will not test whether the object parameters are correct. When
   editing a function this is not ignored.
-- allow_save: Boolean parameter, which if False will prevent the defined data to be saved; This also means it will
+- allow_save: Boolean parameter. If False, it will not allow the defined data to be saved; This also means it will
   be read-only.
 
 
-It's best we take a look at an example.
+Let's take a look at an example.
 
 .. code-block:: python
     :linenos:
@@ -72,40 +72,38 @@ It's best we take a look at an example.
 
 
 
-In the above example we first import the library by typing ``import tkclasswiz as wiz``.
+In this example we first import the library by typing ``import tkclasswiz as wiz``.
 Then we define 2 classes, the class ``Wheel`` and class ``Car``.
 
 The ``Wheel`` class accepts a single parameter annotated with the ``float`` type. It is VERY IMPORTANT
-that all the parameters are annotated, else they will not be displayed when defining parameters through the GUI.
+that all the parameters are annotated. Otherwise they will not be displayed when defining parameters through the GUI.
 
-The ``Car`` class accepts parameters ``name`` of type ``str``, ``speed`` of type ``float`` and list of ``wheels`` 
-of type ``Wheel``. From the ``wheels`` parameter we can see that we can define multiple nested objects as well.
+The ``Car`` class accepts the following parameters: ``name`` of type ``str``, ``speed`` of type ``float`` and a list of ``wheels`` 
+of type ``Wheel``. The ``wheels`` parameter allows us to define multiple nested objects as well.
 
 Then we create an instance of ``Tk``, which is just the standard way for creating a tkinter app.
 
-Then we create a ``combo`` variable of type :class:`~tkclasswiz.storage.ComboBoxObjects`, which will receive the defined
-``Car`` object after we define the object successfully. But it won't receive an actual instance of ``Car``,
-however it will receive an abstract representation of the defined object. The abstract representation is an instance of
-:class:`tkclasswiz.convert.ObjectInfo` and its job is to store the class (in our case ``Car``) and the parameters
-defined. When displaying the defined abstract ``Car`` object inside the GUI, it will be displayed as
+After that, we create a ``combo`` variable of type :class:`~tkclasswiz.storage.ComboBoxObjects`, which will receive the 
+``Car`` object after it is defined successfully. However, it won't receive an actual instance of ``Car``. Instead, it will receive an abstract representation of the defined object. The abstract representation is an instance of
+:class:`tkclasswiz.convert.ObjectInfo` and its job is to store the class (in our case ``Car``) and the defined parameters. When displaying the defined abstract ``Car`` object inside the GUI, it will be displayed as
 ``Class(parameter1=value1, ...)``.
 
-Afterwards we define 2 functions, the first one will open the definition window, while the second one will
+We then define 2 functions. The first one will open the definition window, while the second one will
 convert the abstract ``Car`` object into a real Python object.
 
-Function ``make_car`` accepts a parameter ``old``, which will be later used to edit the existing object after we defined it.
-But since it is not defined yet, this is currently irrelevant. Next lines of code in the function create the
+The function ``make_car`` accepts a parameter ``old``, which will be used to edit the existing object after we defined it at a later point.
+However, since it is not currently defined, it has no effect. The next lines of code in the function create the
 :class:`~tkclasswiz.object_frame.window.ObjectEditWindow` definition window and load in the definition frame by calling
-the :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame`, which we pass
-the class of an object we want to define (``Car``), the return widget (``combo``) that receives the defined object and
+the :py:meth:`~tkclasswiz.object_frame.window.ObjectEditWindow.open_object_edit_frame`. With this method, we can pass
+the class of an object we want to define (``Car``), the return widget (``combo``) that receives the defined object, and
 the ``old_data`` parameter which would load in previously defined values (which currently don't exist).
 
 At the very bottom of the example, we define a few buttons:
 
-- 'Define Car': Calls ``make_car`` function, opening the object definition window.
-- 'Edit Car': Calls ``make_car`` function, opening the object definition window and loading in the already defined
+- 'Define Car': Calls the ``make_car`` function, opening the object definition window.
+- 'Edit Car': Calls the ``make_car`` function, opening the object definition window and loading in the already defined
   :class:`tkclasswiz.convert.ObjectInfo` abstract ``Car`` object.
-- 'Print defined': Calls ``print_defined`` function which converts the abstract object into a real one and prints it out,
+- 'Print defined': Calls the ``print_defined`` function, which converts the abstract object into a real one and prints it out,
   including its type.
 
 Now let's take a look at how our example looks :ref:`inside a GUI <Defining data>`.
