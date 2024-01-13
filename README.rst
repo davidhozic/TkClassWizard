@@ -10,7 +10,19 @@ Links
 ---------------------
 - `Releases <https://github.com/davidhozic/TkClassWizard/releases>`_
 - Need help? Contact me in my `Discord server <https://discord.gg/DEnvahb2Sw>`_.
-- `Documentation <https://tkclasswizard.readthedocs.io/>`_
+- **DOCUMENTATION**: https://tkclasswizard.readthedocs.io/
+
+---------------------
+Main features
+---------------------
+- Interactive definition of Python objects based on annotations.
+- Tkinter based
+- JSON templates
+- Polymorphism
+- Generic classes
+- Type aliases
+- Data validation
+- Conversion of defined data to Python objects and vice-versa.
 
 ----------------------
 Installation
