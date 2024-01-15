@@ -1,8 +1,10 @@
 from enum import EnumMeta
+from typing import get_type_hints
+from pathlib import Path
 import inspect
 import os
 import re
-from pathlib import Path
+
 
 OUTPUT_PATH = "../reference"
 
@@ -95,7 +97,7 @@ with open(os.path.join(OUTPUT_PATH, "index.rst"), "w", encoding="utf-8") as tocw
                     if inspect.isfunction(item):
                         if manual:
                             _async_ = ":async:" if inspect.iscoroutinefunction(item) else ""
-                            annotations = item.__annotations__
+                            annotations = get_type_hints(item)
                             return_ano = annotations.pop("return")
                             doc_str = inspect.cleandoc(item.__doc__)
                             # Replace titles with list titles
