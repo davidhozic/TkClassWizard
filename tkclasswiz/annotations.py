@@ -2,7 +2,7 @@
 Module used for managing annotations.
 """
 from datetime import datetime, timedelta, timezone
-from typing import Union, Optional, get_args, Generic, get_origin
+from typing import Union, Optional, get_args, Generic, get_origin, get_type_hints
 from contextlib import suppress
 from inspect import isclass
 from .doc import doc_category
@@ -96,17 +96,17 @@ def get_annotations(class_) -> dict:
     annotations = {}
     with suppress(AttributeError):
         if isclass(class_):
-            annotations = class_.__init__.__annotations__.copy()
+            annotations = get_type_hints(class_.__init__)
         elif isclass(origin_class := get_origin(class_)) and issubclass(origin_class, Generic):
             # Resolve generics
-            annotations = origin_class.__init__.__annotations__.copy()
+            annotations = get_type_hints(origin_class.__init__)
             generic_types = get_args(origin_class.__orig_bases__[0])
             generic_values = get_args(class_)
             generic_name_value = {generic_types[i]: generic_values[i] for i in range(len(generic_types))}
             for k, v in annotations.items():
                 annotations[k] = generic_name_value.get(v, v)
         else:
-            annotations = class_.__annotations__.copy()
+            annotations = get_type_hints(annotations)
 
     additional_annotations = ADDITIONAL_ANNOTATIONS.get(class_, {})
     annotations = {**annotations, **additional_annotations}

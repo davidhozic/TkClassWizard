@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.2.1
+================
+- Replaced raw usage of ``.__annotations__`` with :func:`typing.get_typehints`.
+
+
 v1.2.0
 ================
 - Added the ability of nicknaming structured objects.
