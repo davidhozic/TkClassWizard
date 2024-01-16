@@ -94,7 +94,7 @@ def get_annotations(class_) -> dict:
     in Python 3.12.
     """
     annotations = {}
-    with suppress(AttributeError):
+    with suppress(AttributeError, TypeError):
         if isclass(class_):
             annotations = get_type_hints(class_.__init__)
         elif isclass(origin_class := get_origin(class_)) and issubclass(origin_class, Generic):

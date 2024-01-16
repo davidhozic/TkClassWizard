@@ -88,12 +88,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         ttk.Button(frame_up_down, text="Up", command=lambda: w.move_selection(-1)).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_up_down, text="Down", command=lambda: w.move_selection(1)).pack(side="left", fill=tk.X, expand=True)
 
-        args = get_args(self.class_)
-        args = self.convert_types(args)
-        if get_origin(args[0]) is Union:
-            args = get_args(args[0])
-
-        for arg in args:
+        for arg in get_args(self.class_):
             menu.add_command(label=self.get_cls_name(arg), command=partial(self.new_object_frame, arg, w))
 
         w.pack(side="left", fill=tk.BOTH, expand=True)
