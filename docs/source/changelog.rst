@@ -24,10 +24,14 @@ Glossary
 Releases
 ---------------------
 
+v1.2.3
+================
+- Fixed annotations not getting obtained for function definitions.
+
+
 v1.2.2
 ================
 - Fixed incorrect ``Union`` processing if it was used in a ``List`` annotation.
-
 
 
 v1.2.1
