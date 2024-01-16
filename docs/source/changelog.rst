@@ -24,6 +24,12 @@ Glossary
 Releases
 ---------------------
 
+v1.2.2
+================
+- Fixed incorrect ``Union`` processing if it was used in a ``List`` annotation.
+
+
+
 v1.2.1
 ================
 - Replaced raw usage of ``.__annotations__`` with :func:`typing.get_typehints`.
