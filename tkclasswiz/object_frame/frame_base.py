@@ -175,16 +175,22 @@ class NewObjectFrameBase(ttk.Frame):
                 if isabstract(type_):
                     r.remove(type_)
 
-            return r
+            return tuple(r)
 
-        while get_origin(types_in) is Union:
-            types_in = get_args(types_in)
+        if get_origin(types_in) is Union:
+            types_in = cls.convert_types(get_args(types_in))
 
-        if not isinstance(types_in, list):
-            if isinstance(types_in, tuple):
-                types_in = list(types_in)
-            else:
-                types_in = [types_in, ]
+        elif issubclass_noexcept(origin := get_origin(types_in), Iterable) and types_in is not str:
+            types_in = origin[cls.convert_types(get_args(types_in))]
+
+        if isinstance(types_in, tuple):
+            new_types = []
+            for t in types_in:
+                new_types.extend(cls.convert_types(t))
+
+            types_in = new_types
+        else:
+            types_in = (types_in,)
 
         # Also include inherited objects
         subtypes = []
@@ -197,7 +203,7 @@ class NewObjectFrameBase(ttk.Frame):
                     subtypes.extend(cls.convert_types(st))
 
         # Remove wrapped classes (eg. wrapped by decorator) + ABC classes
-        return remove_classes(types_in + subtypes)
+        return remove_classes([*types_in, *subtypes])
 
     def init_main_frame(self):
         frame_main = ttk.Frame(self)
