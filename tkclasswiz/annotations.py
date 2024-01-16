@@ -106,7 +106,7 @@ def get_annotations(class_) -> dict:
             for k, v in annotations.items():
                 annotations[k] = generic_name_value.get(v, v)
         else:
-            annotations = get_type_hints(annotations)
+            annotations = get_type_hints(class_)
 
     additional_annotations = ADDITIONAL_ANNOTATIONS.get(class_, {})
     annotations = {**annotations, **additional_annotations}
