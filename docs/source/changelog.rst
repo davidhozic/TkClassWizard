@@ -24,6 +24,12 @@ Glossary
 Releases
 ---------------------
 
+v1.3.0
+================
+- The types will now have their subscripted type displayed alongside them.
+- Custom repr display of structured objects via
+  :py:meth:`tkclasswiz.convert.ObjectInfo.register_repr` method.
+
 v1.2.3
 ================
 - Fixed annotations not getting obtained for function definitions.

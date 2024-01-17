@@ -155,7 +155,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
                     any_filled = True
                     if self.allow_save:
                         menu.add_command(
-                            label=f"New {self.get_cls_name(entry_type)}",
+                            label=f"New {self.get_cls_name(entry_type, args=True)}",
                             command=partial(self.new_object_frame, entry_type, combo)
                         )
 

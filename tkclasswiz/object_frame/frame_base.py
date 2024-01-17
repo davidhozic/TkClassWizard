@@ -1,7 +1,8 @@
-from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar
-from abc import ABC
+from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar, Generic
 from inspect import isabstract
 from contextlib import suppress
+from itertools import chain
+from functools import cache
 
 from ..convert import *
 from ..aliasing import *
@@ -92,30 +93,29 @@ class NewObjectFrameBase(ttk.Frame):
         self.init_main_frame()
 
     @staticmethod
-    def get_cls_name(cls: T) -> Union[str, T]:
+    @cache
+    def get_cls_name(cls: Any, args: bool = False) -> str:
         """
         Returns the name of the class ``cls`` or
         the original class when the name cannot be obtained.
         If alias exists, alias is returned instead.
         """
-        name = NewObjectFrameBase._get_cls_unaliased_name(cls)
         if (alias := get_aliased_name(cls)) is not None:
             return alias + f" ({name})"
+        elif hasattr(cls, "__name__"):
+            name = cls.__name__
+        elif hasattr(cls, "_name") and cls._name:
+            name = cls._name
+        else:
+            name = str(cls)
+
+        if args and (type_args := get_args(cls)):
+            name = (
+                name + 
+                f"[{ ', '.join([NewObjectFrameBase.get_cls_name(x) for x in type_args]) }]"
+            )
         
         return name
-
-    @staticmethod
-    def _get_cls_unaliased_name(cls: T) -> Union[str, T]:
-        """
-        Returns the name of the class ``cls`` or
-        the original class when the name cannot be obtained.
-        """
-        if hasattr(cls, "__name__"):
-            return cls.__name__
-        if hasattr(cls, "_name"):
-            return cls._name
-
-        return cls
 
     @classmethod
     def set_origin_window(cls, window: "ObjectEditWindow"):
@@ -143,7 +143,7 @@ class NewObjectFrameBase(ttk.Frame):
             
             return value
 
-        for type_ in filter(lambda t: cls._get_cls_unaliased_name(t) in __builtins__, types):
+        for type_ in filter(lambda t: t.__module__ == "builtins", types):
             with suppress(Exception):
                 cast_funct = CAST_FUNTIONS.get(type_)
                 if cast_funct is None:
@@ -157,7 +157,7 @@ class NewObjectFrameBase(ttk.Frame):
         return value
 
     @classmethod
-    def convert_types(cls, types_in):
+    def convert_types(cls, input_type: type):
         """
         Type preprocessing method, that extends the list of types with inherited members (polymorphism)
         and removes classes that are wrapped by some other class, if the wrapper class also appears in
@@ -177,33 +177,36 @@ class NewObjectFrameBase(ttk.Frame):
 
             return tuple(r)
 
-        if get_origin(types_in) is Union:
-            types_in = cls.convert_types(get_args(types_in))
+        origin = get_origin(input_type)
+        # Unpack Union items into a tuple
+        if origin is Union or issubclass_noexcept(origin, Iterable):
+            new_types = dict()
+            for type_ in chain.from_iterable([cls.convert_types(r) for r in get_args(input_type)]):
+                new_types[type_] = 0  # Use dictionary's keys as OrderedSet, with dummy value 0
 
-        elif issubclass_noexcept(origin := get_origin(types_in), Iterable) and types_in is not str:
-            types_in = origin[cls.convert_types(get_args(types_in))]
+            new_types = tuple(new_types)
+            if origin is Union:
+                return new_types
 
-        if isinstance(types_in, tuple):
-            new_types = []
-            for t in types_in:
-                new_types.extend(cls.convert_types(t))
+            return (origin[new_types],)
 
-            types_in = new_types
-        else:
-            types_in = (types_in,)
+        if issubclass_noexcept(origin, Generic):
+            # Patch for Python versions < 3.10
+            input_type.__name__ = origin.__name__
 
-        # Also include inherited objects
+        if input_type.__module__ == "builtins":
+            # Don't consider built-int types for polymorphism
+            # No removal of abstract classes is needed either as builtins types aren't abstract
+            return (input_type,)
+
+        # Extend subclasses
         subtypes = []
-        for t in types_in:
-            if cls.get_cls_name(t) in __builtins__:
-                continue  # Don't consider built-int types for polymorphism
-
-            if hasattr(t, "__subclasses__"):
-                for st in t.__subclasses__():
-                    subtypes.extend(cls.convert_types(st))
+        if hasattr(input_type, "__subclasses__"):
+            for st in input_type.__subclasses__():
+                subtypes.extend(cls.convert_types(st))
 
         # Remove wrapped classes (eg. wrapped by decorator) + ABC classes
-        return remove_classes([*types_in, *subtypes])
+        return remove_classes([input_type, *subtypes])
 
     def init_main_frame(self):
         frame_main = ttk.Frame(self)
