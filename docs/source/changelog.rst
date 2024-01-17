@@ -30,7 +30,6 @@ v1.3.0
 - Custom repr display of structured objects via
   :py:meth:`tkclasswiz.convert.ObjectInfo.register_repr` method.
 
-
 v1.2.3
 ================
 - Fixed annotations not getting obtained for function definitions.
