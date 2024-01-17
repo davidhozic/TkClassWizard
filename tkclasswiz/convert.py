@@ -1,7 +1,8 @@
 """
 Modules contains definitions related to GUI object transformations.
 """
-from typing import Any, Union, List, Generic, TypeVar, Mapping, Optional
+from __future__ import annotations
+from typing import Any, Union, List, Generic, TypeVar, Mapping, Optional, Callable
 from contextlib import suppress
 from inspect import signature
 from enum import Enum
@@ -124,6 +125,7 @@ class ObjectInfo(Generic[TClass]):
         recognition.
     """
     CHARACTER_LIMIT = 150
+    custom_display_map: dict[type, Callable] = {}
 
     def __init__(
         self,
@@ -157,23 +159,31 @@ class ObjectInfo(Generic[TClass]):
         if self._repr is not None:
             return self._repr
 
-        _ret: List[str] = []
-        if self.nickname:
-            _ret += f"({self.nickname}) "
+        repr_get = ObjectInfo.custom_display_map.get(self.class_, self._repr_default)
+        _ret = repr_get(self)
 
-        name = get_aliased_name(self.class_)
+        self._repr = _ret
+        return _ret
+    
+    @staticmethod
+    def _repr_default(object_info: ObjectInfo) -> str:
+        _ret: List[str] = []
+        if object_info.nickname:
+            _ret += f"({object_info.nickname}) "
+
+        name = get_aliased_name(object_info.class_)
         if name is not None:
-            name += f'({self.class_.__name__})'
+            name += f'({object_info.class_.__name__})'
         else:
-            name = self.class_.__name__
+            name = object_info.class_.__name__
 
         _ret +=  name + "("
         private_params = set()
-        if hasattr(self.class_, "__passwords__"):
-            private_params = private_params.union(self.class_.__passwords__)
+        if hasattr(object_info.class_, "__passwords__"):
+            private_params = private_params.union(object_info.class_.__passwords__)
 
-        for k, v in self.data.items():
-            if len(_ret) > self.CHARACTER_LIMIT:
+        for k, v in object_info.data.items():
+            if len(_ret) > object_info.CHARACTER_LIMIT:
                 break
 
             if isinstance(v, str):
@@ -188,12 +198,34 @@ class ObjectInfo(Generic[TClass]):
 
         _ret: str = ''.join(_ret)
         _ret = _ret.rstrip(", ") + ")"
-        if len(_ret) > self.CHARACTER_LIMIT:
-            _ret = _ret[:self.CHARACTER_LIMIT] + "...)"
+        if len(_ret) > object_info.CHARACTER_LIMIT:
+            _ret = _ret[:object_info.CHARACTER_LIMIT] + "...)"
 
-        self._repr = _ret
         return _ret
 
+    @classmethod
+    def register_repr(cls, class_: type, repr: Callable[[ObjectInfo], str], inherited: bool = False):
+        """
+        Registers a custom __repr__ (string representation of object) function.
+        The function must as a single parameter accept the ``ObjectInfo`` instance
+        being represented as a string.
+
+        Parameters
+        ------------
+        class_: type
+            The class for which this custom ``repr`` is being register.
+        repr: Callable[[ObjectInfo], str]
+            The function that will provide custom ``__repr__``.
+            As a parameter it accepts the ``ObjectInfo`` object.
+            It returns a :class:`str` (string).
+        inherited: bool
+            Boolean flag. Setting it to True will register repr for inherited members as well.
+            Defaults to False.
+        """
+        cls.custom_display_map[class_] = repr
+        if inherited:
+            for type_ in class_.__subclasses__():
+                cls.register_repr(type_, repr, True)
 
 @cache_result(max=1024)
 @doc_category("Conversion")

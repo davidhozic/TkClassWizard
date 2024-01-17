@@ -171,6 +171,10 @@ This is how our frame looks after defining 4 ``Wheel`` objects:
 .. image:: ./images/new_define_frame_list_defined.png
   :width: 15cm
 
+
+Final definition
+=================
+
 If we click "Save", we go back to our ``Car`` definition frame, that has all the parameters defined.
 Clicking on "Save" once again will save the ``Car`` object to our original GUI Combobox.
 

@@ -24,9 +24,11 @@ Glossary
 Releases
 ---------------------
 
-v1.2.4
+v1.3.0
 ================
-- Fixed typing system. (names of types)
+- The types will now have their subscripted type displayed alongside them.
+- Custom repr display of structured objects via
+  :py:meth:`tkclasswiz.convert.ObjectInfo.register_repr` method.
 
 
 v1.2.3

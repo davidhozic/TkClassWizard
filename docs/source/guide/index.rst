@@ -15,5 +15,6 @@ Index:
     conversion
     polymorphism
     abstractclasses
+    customrepr
     aliasing
     generics
