@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.2.4
+================
+- Fixed typing system. (names of types)
+
+
 v1.2.3
 ================
 - Fixed annotations not getting obtained for function definitions.

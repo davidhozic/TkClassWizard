@@ -1,7 +1,6 @@
 """
 Modules contains definitions related to GUI object transformations.
 """
-
 from typing import Any, Union, List, Generic, TypeVar, Mapping, Optional
 from contextlib import suppress
 from inspect import signature
