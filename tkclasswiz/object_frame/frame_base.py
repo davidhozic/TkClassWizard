@@ -177,6 +177,13 @@ class NewObjectFrameBase(ttk.Frame):
 
             return tuple(r)
 
+        if isinstance(input_type, str):
+            raise TypeError(
+                f"Provided type '{input_type}' is not a type - it is a string!\n"
+                "Potential subscripted type problem?\n"
+                "Instead of e. g., list['type'], try using typing.List['type']."
+            )
+
         origin = get_origin(input_type)
         # Unpack Union items into a tuple
         if origin is Union or issubclass_noexcept(origin, Iterable):
