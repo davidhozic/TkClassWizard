@@ -88,8 +88,8 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         ttk.Button(frame_up_down, text="Up", command=lambda: w.move_selection(-1)).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_up_down, text="Down", command=lambda: w.move_selection(1)).pack(side="left", fill=tk.X, expand=True)
 
-        for arg in get_args(self.class_):
-            menu.add_command(label=self.get_cls_name(arg), command=partial(self.new_object_frame, arg, w))
+        for arg in get_args(self.convert_types(class_)[0]):
+            menu.add_command(label=self.get_cls_name(arg, True), command=partial(self.new_object_frame, arg, w))
 
         w.pack(side="left", fill=tk.BOTH, expand=True)
 
