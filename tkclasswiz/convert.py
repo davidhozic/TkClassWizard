@@ -240,7 +240,7 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
         object_str = f"{object.class_.__name__}(\n    "
         attr_str = []
         for attr, value in object.data.items():
-            if isinstance(value, (ObjectInfo, list, tuple, set)):
+            if isinstance(value, (ObjectInfo, list, tuple, set, Enum)):
                 value, import_data_ = convert_objects_to_script(value)
                 import_data.extend(import_data_)
 
@@ -248,8 +248,6 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
                 value, _ = convert_objects_to_script(value)
 
             attr_str.append(f"{attr}={value},\n")
-            if issubclass(type(value), Enum):
-                import_data.append(f"from {type(value).__module__} import {type(value).__name__}")
 
         import_data.append(f"from {object.class_.__module__} import {object.class_.__name__}")
 
@@ -265,6 +263,11 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
 
         _list_data = "    ".join(''.join(_list_data).splitlines(keepends=True)) + "]"
         object_data.append(_list_data)
+
+    elif isinstance(object, Enum):
+        import_data.append(f"from {object.__module__} import {type(object).__name__}")
+        object_data.append(str(object))
+
     else:
         if isinstance(object, str):
             object = object.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
