@@ -23,6 +23,12 @@ Glossary
 ---------------------
 Releases
 ---------------------
+
+v1.4.0
+================
+- Definition of enums and literal values inside iterable types.
+
+
 v1.3.1
 ================
 - Fixed :func:`tkclasswiz.convert.convert_objects_to_script` not including enum imports.
