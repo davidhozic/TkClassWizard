@@ -255,7 +255,15 @@ class NewObjectFrameStruct(NewObjectFrameBase):
                 if not value:
                     continue
 
-                value = self.cast_type(value, types_)
+                try:
+                    value = self.cast_type(value, types_)
+                except TypeError as exc:
+                    # Perhaps it's a valid literal:
+                    literal_types = self.filter_literals(types_)
+                    if not literal_types:
+                        raise
+
+                    self.check_literals(value, literal_types)
 
             map_[attr] = value
 

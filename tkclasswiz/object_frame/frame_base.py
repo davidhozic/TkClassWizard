@@ -122,6 +122,36 @@ class NewObjectFrameBase(ttk.Frame):
         cls.origin_window = window
 
     @classmethod
+    def filter_literals(cls, types_: Iterable):
+        "Returns only the literal types from ``types_``"
+        return [x for x in types_ if get_origin(x) is Literal]
+
+    @classmethod
+    def check_literals(cls, value: str, literal_types: Iterable):
+        """
+        Checks if the ``value`` is a correct iterable.
+        
+        Parameters
+        -------------
+        value: str
+            The string value to be checked.
+        types: Iterable[Literal]
+            An iterable of accepted literals.
+        """
+        allowed_values = []
+        for literal_type in literal_types:
+            args = get_args(literal_type)
+            if value in args:
+                return value
+
+            allowed_values.extend(args)
+
+        raise ValueError(
+            f"'{value}' (a string) is not one of accepted types and does not match any literal values.\n"
+            f"'Allowed literals: {allowed_values}."
+        )
+
+    @classmethod
     def cast_type(cls, value: Any, types: Iterable):
         """
         Tries to convert *value* into one of the types inside *types* (first successful).
@@ -135,13 +165,6 @@ class NewObjectFrameBase(ttk.Frame):
         CAST_FUNTIONS = {
             dict: lambda v: convert_to_object_info(json.loads(v))
         }
-
-        # Validate literals
-        if get_origin(types[0]) is Literal:
-            if value not in (args := get_args(types[0])):
-                raise ValueError(f"'{value}' is not a valid value'. Accepted: {args}")
-            
-            return value
 
         for type_ in filter(lambda t: t.__module__ == "builtins", types):
             with suppress(Exception):

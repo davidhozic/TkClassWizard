@@ -1,16 +1,18 @@
-from typing import get_args, get_origin, Any, List, Union
+from typing import get_args, get_origin, Any, List, Literal
+from inspect import isclass, isfunction
 from functools import partial
+from enum import Enum
 
+from ..doc import doc_category
+from ..utilities import *
 from ..convert import *
 from ..dpi import *
-from ..utilities import *
-from ..doc import doc_category
 
-from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
-from .frame_base import *
 from .tooltip import ListboxTooltip
+from .frame_base import *
+from ..storage import *
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -65,7 +67,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         allow_save = True
     ):
         dpi_5 = dpi_scaled(5)
-        super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
+        super().__init__(self.convert_types(class_)[0], return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
         ListboxTooltip(self.storage_widget, 0)
 
@@ -76,7 +78,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
 
         ttk.Button(frame_cp, text="Copy", command=w.save_to_clipboard).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_cp, text="Paste", command=w.paste_from_clipboard).pack(side="left", fill=tk.X, expand=True)
-        menubtn = ttk.Menubutton(frame_edit_remove, text="Add object")
+        menubtn = ttk.Menubutton(frame_edit_remove, text="New")
         menu = tk.Menu(menubtn)
         menubtn.configure(menu=menu)
         menubtn.pack()
@@ -88,8 +90,31 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         ttk.Button(frame_up_down, text="Up", command=lambda: w.move_selection(-1)).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_up_down, text="Down", command=lambda: w.move_selection(1)).pack(side="left", fill=tk.X, expand=True)
 
-        for arg in get_args(self.convert_types(class_)[0]):
-            menu.add_command(label=self.get_cls_name(arg, True), command=partial(self.new_object_frame, arg, w))
+        self._list_args = get_args(self.class_)
+        insert_items = []
+        for arg in self._list_args:
+            if arg is None:
+                insert_items.append(...)
+                insert_items.append(None)
+            elif issubclass_noexcept(arg, Enum):
+                insert_items.append(...)
+                insert_items.extend(list(arg))
+            elif get_origin(arg) is Literal:
+                insert_items.append(...)
+                insert_items.extend(get_args(arg))
+            elif isclass(arg) or isfunction(arg):
+                menu.add_command(label=self.get_cls_name(arg, True), command=partial(self.new_object_frame, arg, w))
+
+        if insert_items:
+            menu_insert = tk.Menu(menu)
+            for item in insert_items:
+                if item is Ellipsis:
+                    menu_insert.add_separator()
+                else:
+                    label = f"'{item}'" if isinstance(item, str) else str(item)
+                    menu_insert.add_command(label=label, command=partial(w.insert, tk.END, item))
+
+            menu.add_cascade(label=">Insert", menu=menu_insert)
 
         w.pack(side="left", fill=tk.BOTH, expand=True)
 
@@ -106,7 +131,12 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         return self.storage_widget.get()
 
     def to_object(self):
-        return self.get_gui_data()  # List items are not to be converted
+        data = self.get_gui_data()  # List items are not to be converted
+        for d in data:
+            if isinstance(d, str) and str not in self._list_args:
+                self.check_literals(d, self.filter_literals(self._list_args))
+
+        return data
     
     def _edit_selected(self):
         selection = self.storage_widget.curselection()
