@@ -27,6 +27,7 @@ Releases
 v1.4.0
 ================
 - Definition of enums and literal values inside iterable types.
+- Ability to register deprecated parameters.
 
 
 v1.3.1

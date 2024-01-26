@@ -132,61 +132,38 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             state="normal" if self.allow_save else "disabled"
         )
         self.entry_nick.pack(anchor=tk.W, padx=dpi_5_h, pady=dpi_5)
+        self._create_fields(annotations, additional_values)
+        if old_data is not None:  # Edit
+            self.load(old_data)
 
-        def fill_values(k: str, entry_types: list, menu: tk.Menu, combo: ComboBoxObjects):
-            "Fill ComboBox values based on types in ``entry_types`` and create New <object_type> buttons"
-            any_filled = False
-            for entry_type in entry_types:
-                if get_origin(entry_type) is Literal:
-                    values = get_args(entry_type)
-                    combo["values"] = values
-                    # tkvalid.add_option_validation(combo, values)
-                elif entry_type is bool:
-                    combo.insert(tk.END, True)
-                    combo.insert(tk.END, False)
-                    # tkvalid.add_option_validation(combo, ["True", "False", ''])
-                elif issubclass_noexcept(entry_type, Enum):
-                    combo["values"] = values = [en for en in entry_type]
-                    # tkvalid.add_option_validation(combo, list(map(str, values)) + [''])
-                elif entry_type is type(None):
-                    if bool not in entry_types:
-                        combo.insert(tk.END, None)
-                else:  # Type not supported, try other types
-                    any_filled = True
-                    if self.allow_save:
-                        menu.add_command(
-                            label=f"New {self.get_cls_name(entry_type, args=True)}",
-                            command=partial(self.new_object_frame, entry_type, combo)
-                        )
+        self.remember_gui_data()
 
-            # Additional values to be inserted into ComboBox
-            for value in additional_values.get(k, []):
-                combo.insert(tk.END, value)
+    def _create_fields(self, annotations: dict[str, type], additional_values: dict):
+        deprecated_params = set(getattr(self.class_, "__deprecated_params__", []))
+        label_width = max(*map(len, annotations), 15) - 2
 
-            # The class of last list like type. Needed when "Edit selected" is used
-            # since we don't know what type it was
-            return any_filled
-
-        max_attr_name_len = max(*map(len, annotations), 15) - 2
-        
         for (k, v) in annotations.items():
             # Init widgets
             entry_types = self.convert_types(v)
             frame_annotated = ttk.Frame(self.frame_main)
-            frame_annotated.pack(fill=tk.BOTH, expand=True, pady=dpi_5)
-            ttk.Label(frame_annotated, text=k, width=max_attr_name_len).pack(side="left")
-
-            bnt_new_menu = ttk.Menubutton(frame_annotated, text="New")            
-            menu_new = tk.Menu(bnt_new_menu)
-            bnt_new_menu.configure(menu=menu_new)
+            frame_annotated.pack(fill=tk.BOTH, expand=True, pady=5)
+            ttk.Label(frame_annotated, text=k, width=label_width).pack(side="left")
 
             # Storage widget with the tooltip for displaying
             # nicknames on ObjectInfo instances
             w = combo = ComboBoxObjects(frame_annotated)
             ComboboxTooltip(w)
 
-            # Fill values
-            any_filled = fill_values(k, entry_types, menu_new, combo)
+            # Don't allow the definition of deprecated params, edit still allowed though
+            bnt_new_menu = ttk.Menubutton(frame_annotated, text="New")
+            if k in deprecated_params:
+                combo.config(state="disabled")
+                bnt_new_menu.configure(state="disabled")
+            else:
+                menu_new = tk.Menu(bnt_new_menu)
+                bnt_new_menu.configure(menu=menu_new)
+                any_filled = self._fill_field_values(k, entry_types, menu_new, combo, additional_values)
+
             bnt_edit = ttk.Button(
                 frame_annotated,
                 text="🖋️",
@@ -203,20 +180,53 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             if not (any_filled and self.allow_save):
                 bnt_new_menu.configure(state="disabled")
 
-            if not any_filled:
-                bnt_edit.configure(state="disabled")
-
-            bnt_copy_paste.pack(side="right", padx=dpi_5_h)
-            bnt_edit.pack(side="right", padx=dpi_5_h)
-            bnt_new_menu.pack(side="right", padx=dpi_5_h)
-            combo.pack(fill=tk.X, side="right", expand=True, padx=dpi_5_h)
+            bnt_copy_paste.pack(side="right", padx=2)
+            bnt_edit.pack(side="right", padx=2)
+            bnt_new_menu.pack(side="right", padx=2)
+            combo.pack(fill=tk.X, side="right", expand=True, padx=2)
             self._map[k] = (w, entry_types)
 
-        if old_data is not None:  # Edit
-            self.load(old_data)
+    def _fill_field_values(
+        self,
+        k: str,
+        entry_types: list,
+        menu: tk.Menu,
+        combo: ComboBoxObjects,
+        additional_values: dict
+    ):
+        "Fill ComboBox values based on types in ``entry_types`` and create New <object_type> buttons"
+        any_filled = False
+        for entry_type in entry_types:
+            if get_origin(entry_type) is Literal:
+                values = get_args(entry_type)
+                combo["values"] = values
+                # tkvalid.add_option_validation(combo, values)
+            elif entry_type is bool:
+                combo.insert(tk.END, True)
+                combo.insert(tk.END, False)
+                # tkvalid.add_option_validation(combo, ["True", "False", ''])
+            elif issubclass_noexcept(entry_type, Enum):
+                combo["values"] = values = [en for en in entry_type]
+                # tkvalid.add_option_validation(combo, list(map(str, values)) + [''])
+            elif entry_type is type(None):
+                if bool not in entry_types:
+                    combo.insert(tk.END, None)
+            else:  # Type not supported, try other types
+                any_filled = True
+                if self.allow_save:
+                    menu.add_command(
+                        label=f"New {self.get_cls_name(entry_type, args=True)}",
+                        command=partial(self.new_object_frame, entry_type, combo)
+                    )
 
-        self.remember_gui_data()
+        # Additional values to be inserted into ComboBox
+        for value in additional_values.get(k, []):
+            combo.insert(tk.END, value)
 
+        # The class of last list like type. Needed when "Edit selected" is used
+        # since we don't know what type it was
+        return any_filled
+    
     @extendable
     def load(self, old_data: ObjectInfo):
         data = old_data.data
