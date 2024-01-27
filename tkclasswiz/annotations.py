@@ -1,8 +1,8 @@
 """
 Module used for managing annotations.
 """
-from datetime import datetime, timedelta, timezone
 from typing import Union, Optional, get_args, Generic, get_origin, get_type_hints
+from datetime import datetime, timedelta, timezone
 from contextlib import suppress
 from inspect import isclass
 from .doc import doc_category

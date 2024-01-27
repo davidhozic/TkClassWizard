@@ -172,6 +172,48 @@ This is how our frame looks after defining 4 ``Wheel`` objects:
   :width: 15cm
 
 
+Defining (enum) flags
+=======================
+Let's say that our car also needs a type designation. The ``Car`` class may contain an enum flag parameter,
+indicating this designation.
+
+.. code-block:: python
+
+  from enum import Flag, auto
+
+  class Designation(Flag):
+      FAMILIY = auto()
+      SINGLE_PERSON = auto()
+      HEAVY_TRANSPORT = auto()
+
+    class Car:
+        def __init__(
+            self,
+            ...
+            designation: Designation,
+        ):
+            ...
+
+When we try to define the ``designation`` parameter from the above example,
+the following window will be displayed.
+
+.. image:: ./images/new_define_frame_flag.png
+  :width: 15cm
+
+The flag definition frame has 4 main elements:
+
+- a placeholder for the current value,
+- a Combobox (dropdown menu) for selecting a flag
+- an add button for adding the selected (in Combobox) flag to the current flag value.
+- a remove button for removing the selected (in Combobox) flag from the current flag value.
+
+The following image shows show two added flags look inside the placeholder.
+
+.. image:: ./images/new_define_frame_flag_values.png
+  :width: 15cm
+
+The flag value can be saved like any other type. It is done by clicking on the "Save" button.
+
 Final definition
 =================
 

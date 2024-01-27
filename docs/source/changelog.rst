@@ -28,6 +28,18 @@ v1.3.1
 - Fixed :func:`tkclasswiz.convert.convert_objects_to_script` not including enum imports.
 
 
+v1.4.0
+================
+- Definition of enums and literal values inside iterable types.
+- Ability to register deprecated parameters.
+- Ability to define :class:`enum.Flag` like flags.
+
+
+v1.3.1
+================
+- Fixed :func:`tkclasswiz.convert.convert_objects_to_script` not including enum imports.
+
+
 v1.3.0
 ================
 - The types will now have their subscripted type displayed alongside them.
