@@ -18,3 +18,4 @@ Index:
     customrepr
     aliasing
     generics
+    deprecations

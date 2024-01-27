@@ -37,3 +37,4 @@ from .messagebox import *
 from .storage import *
 from .utilities import *
 from .aliasing import *
+from .deprecation import *
