@@ -4,6 +4,7 @@ from functools import partial
 from enum import Enum
 
 from ..doc import doc_category
+from ..deprecated import *
 from ..utilities import *
 from ..convert import *
 from ..dpi import *
@@ -67,7 +68,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         allow_save = True
     ):
         dpi_5 = dpi_scaled(5)
-        super().__init__(self.convert_types(class_)[0], return_widget, parent, old_data, check_parameters, allow_save)
+        super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
         ListboxTooltip(self.storage_widget, 0)
 
@@ -78,7 +79,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
 
         ttk.Button(frame_cp, text="Copy", command=w.save_to_clipboard).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_cp, text="Paste", command=w.paste_from_clipboard).pack(side="left", fill=tk.X, expand=True)
-        menubtn = ttk.Menubutton(frame_edit_remove, text="New")
+        menubtn = ttk.Menubutton(frame_edit_remove, text="Add")
         menu = tk.Menu(menubtn)
         menubtn.configure(menu=menu)
         menubtn.pack()
@@ -91,8 +92,31 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         ttk.Button(frame_up_down, text="Down", command=lambda: w.move_selection(1)).pack(side="left", fill=tk.X, expand=True)
 
         self._list_args = get_args(self.class_)
-        insert_items = []
+        args_normal = []
+        args_depr = []
         for arg in self._list_args:
+            if is_deprecated(arg):
+                args_depr.append(arg)
+            else:
+                args_normal.append(arg)
+
+        self._create_add_menu(args_normal, menu)
+        if args_depr:
+            menu_depr = tk.Menu()
+            self._create_add_menu(args_depr, menu_depr)
+            menu.add_cascade(label=">Deprecated", menu=menu_depr)
+
+        w.pack(side="left", fill=tk.BOTH, expand=True)
+
+        if old_data is not None:
+            self.load(old_data)
+
+        self.remember_gui_data()
+
+    def _create_add_menu(self, args: list, menu: tk.Menu):
+        insert_items = []
+        widget = self.storage_widget
+        for arg in args:
             if arg is None:
                 insert_items.append(...)
                 insert_items.append(None)
@@ -103,7 +127,10 @@ class NewObjectFrameIterable(NewObjectFrameBase):
                 insert_items.append(...)
                 insert_items.extend(get_args(arg))
             elif isclass(arg) or isfunction(arg):
-                menu.add_command(label=self.get_cls_name(arg, True), command=partial(self.new_object_frame, arg, w))
+                menu.add_command(
+                    label=f"New {self.get_cls_name(arg, True)}",
+                    command=partial(self.new_object_frame, arg, widget)
+                )
 
         if insert_items:
             menu_insert = tk.Menu(menu)
@@ -112,16 +139,9 @@ class NewObjectFrameIterable(NewObjectFrameBase):
                     menu_insert.add_separator()
                 else:
                     label = f"'{item}'" if isinstance(item, str) else str(item)
-                    menu_insert.add_command(label=label, command=partial(w.insert, tk.END, item))
+                    menu_insert.add_command(label=label, command=partial(widget.insert, tk.END, item))
 
             menu.add_cascade(label=">Insert", menu=menu_insert)
-
-        w.pack(side="left", fill=tk.BOTH, expand=True)
-
-        if old_data is not None:
-            self.load(old_data)
-
-        self.remember_gui_data()
 
     def load(self, old_data: List[Any]):
         self.storage_widget.insert(tk.END, *old_data)

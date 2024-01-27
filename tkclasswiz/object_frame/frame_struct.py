@@ -12,6 +12,7 @@ from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
 from ..annotations import get_annotations
+from ..deprecated import *
 from ..doc import doc_category
 
 from .frame_base import *
@@ -132,20 +133,28 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             state="normal" if self.allow_save else "disabled"
         )
         self.entry_nick.pack(anchor=tk.W, padx=dpi_5_h, pady=dpi_5)
-        self._create_fields(annotations, additional_values)
+        annotations_depr = {k:v for k,v in annotations.items() if is_deprecated(class_, k)}
+        for k in annotations_depr:
+            del annotations[k]
+
+        self._create_fields(annotations, additional_values, self.frame_main)
+        if annotations_depr:
+            ttk.Separator(self.frame_main).pack(fill=tk.X)
+            ttk.Label(self.frame_main, text="Deprecated").pack(anchor=tk.W)
+            self._create_fields(annotations_depr, additional_values, self.frame_main)
+
         if old_data is not None:  # Edit
             self.load(old_data)
 
         self.remember_gui_data()
 
-    def _create_fields(self, annotations: dict[str, type], additional_values: dict):
-        deprecated_params = set(getattr(self.class_, "__deprecated_params__", []))
+    def _create_fields(self, annotations: dict[str, type], additional_values: dict, frame: ttk.Frame):
         label_width = max(*map(len, annotations), 15) - 2
 
         for (k, v) in annotations.items():
             # Init widgets
             entry_types = self.convert_types(v)
-            frame_annotated = ttk.Frame(self.frame_main)
+            frame_annotated = ttk.Frame(frame)
             frame_annotated.pack(fill=tk.BOTH, expand=True, pady=5)
             ttk.Label(frame_annotated, text=k, width=label_width).pack(side="left")
 
@@ -154,15 +163,24 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             w = combo = ComboBoxObjects(frame_annotated)
             ComboboxTooltip(w)
 
-            # Don't allow the definition of deprecated params, edit still allowed though
             bnt_new_menu = ttk.Menubutton(frame_annotated, text="New")
-            if k in deprecated_params:
-                combo.config(state="disabled")
-                bnt_new_menu.configure(state="disabled")
-            else:
-                menu_new = tk.Menu(bnt_new_menu)
-                bnt_new_menu.configure(menu=menu_new)
-                any_filled = self._fill_field_values(k, entry_types, menu_new, combo, additional_values)
+            menu_new = tk.Menu(bnt_new_menu)
+            bnt_new_menu.configure(menu=menu_new)
+
+            deprecated_param_types = set(t for t in entry_types if is_deprecated(self.class_, k, t))
+            normal_types = [t for t in entry_types if t not in deprecated_param_types]
+            any_filled = self._fill_field_values(k, normal_types, menu_new, combo, additional_values)
+
+            if deprecated_param_types:
+                menu_depr = tk.Menu(menu_new)
+                menu_new.add_cascade(label=">Deprecated", menu=menu_depr)
+                any_filled = self._fill_field_values(
+                    k,
+                    list(deprecated_param_types),
+                    menu_depr,
+                    combo,
+                    additional_values
+                ) or any_filled
 
             bnt_edit = ttk.Button(
                 frame_annotated,
