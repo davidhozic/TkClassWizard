@@ -2,7 +2,7 @@ from typing import get_args, get_origin, Iterable, Union, Literal, Dict, Tuple
 
 from collections.abc import Iterable as ABCIterable
 from functools import partial
-from enum import Enum
+from enum import Enum, Flag
 
 
 from ..convert import *
@@ -223,7 +223,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
                 combo.insert(tk.END, True)
                 combo.insert(tk.END, False)
                 # tkvalid.add_option_validation(combo, ["True", "False", ''])
-            elif issubclass_noexcept(entry_type, Enum):
+            elif issubclass_noexcept(entry_type, Enum) and not issubclass_noexcept(entry_type, Flag):
                 combo["values"] = values = [en for en in entry_type]
                 # tkvalid.add_option_validation(combo, list(map(str, values)) + [''])
             elif entry_type is type(None):

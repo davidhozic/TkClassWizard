@@ -1,4 +1,5 @@
 from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHECKING, TypeVar, Generic
+from abc import ABC, abstractmethod
 from inspect import isabstract
 from contextlib import suppress
 from itertools import chain
@@ -32,7 +33,7 @@ __all__ = (
 
 @extendable
 @doc_category("Object frames")
-class NewObjectFrameBase(ttk.Frame):
+class NewObjectFrameBase(ttk.Frame, ABC):
     """
     Base Frame for inside the :class:`ObjectEditWindow` that allows object definition.
 
@@ -287,12 +288,14 @@ class NewObjectFrameBase(ttk.Frame):
             class_, widget, allow_save=allow_save, *args, **kwargs
         )
 
+    @abstractmethod
     def to_object(self):
         """
         Creates an object from the GUI data.
         """
         raise NotImplementedError
 
+    @abstractmethod
     def load(self, old_data: Any):
         """
         Loads the old object info data into the GUI.
@@ -328,6 +331,7 @@ class NewObjectFrameBase(ttk.Frame):
         """
         self._original_gui_data = self.get_gui_data()
 
+    @abstractmethod
     def get_gui_data(self) -> Any:
         """
         Returns all GUI values.
