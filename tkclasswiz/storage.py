@@ -19,6 +19,7 @@ __all__ = (
     "ComboBoxObjects",
     "ComboEditFrame",
     "HintedEntry",
+    "PyObjectScalar",
 )
 
 
@@ -73,6 +74,34 @@ class HintedEntry(ttk.Entry):
     def _focus_out(self, event: tk.Event):
         if not super().get():
             self._set_hint()
+
+
+@doc_category("Storage widgets")
+class PyObjectScalar(ttk.Frame):
+    """
+    Represents a single storage widget for a Python object.
+    """
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.element = None
+        self.display = ttk.Entry(self, state="readonly")
+        self.display.pack(fill=tk.BOTH, expand=True)
+
+    def get(self) -> object:
+        """
+        Returns the stored Python object (or None if not set).
+        """
+        return self.element
+
+    def set(self, value: object):
+        """
+        Sets the Python object as the widget's value.
+        """
+        self.display.config(state="active")
+        self.display.delete("0", tk.END)
+        self.display.insert(tk.END, str(value))
+        self.display.config(state="readonly")
+        self.element = value
 
 
 @doc_category("Storage widgets")

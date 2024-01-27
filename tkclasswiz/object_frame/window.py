@@ -1,20 +1,22 @@
-from typing import get_origin, Iterable, List
-from collections.abc import Iterable as ABCIterable
+from typing import get_origin
+from inspect import isclass, isfunction
+from collections.abc import Sequence, Set
+from enum import Flag
 
 from .frame_number import *
 from .frame_iterable import *
 from .frame_string import *
 from .frame_struct import *
 from .frame_base import *
+from .frame_flag import *
 
-
-from ..dpi import dpi_scaled
+from ..utilities import gui_except, issubclass_noexcept
 from ..extensions import extendable
-from ..utilities import gui_except
 from ..doc import doc_category
+from ..dpi import dpi_scaled
 
-import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter as tk
 
 
 __all__ = (
@@ -28,19 +30,6 @@ class ObjectEditWindow(tk.Toplevel):
     """
     Top level window for creating and editing new objects.
     """
-
-    # Map used to map types to specific class.
-    # If type is not in this map, structured object will be assumed.
-    TYPE_INIT_MAP = {
-        str: NewObjectFrameString,
-        float: NewObjectFrameNumber,
-        int: NewObjectFrameNumber,
-        list: NewObjectFrameIterable,
-        Iterable: NewObjectFrameIterable,
-        ABCIterable: NewObjectFrameIterable,
-        tuple: NewObjectFrameIterable,
-    }
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._closed = False
@@ -48,7 +37,7 @@ class ObjectEditWindow(tk.Toplevel):
         dpi_5 = dpi_scaled(5)
 
         # Elements
-        self.opened_frames: List[NewObjectFrameBase] = []
+        self.opened_frames: list[NewObjectFrameBase] = []
         self.frame_main = ttk.Frame(self, padding=(dpi_5, dpi_5))
         self.frame_toolbar = ttk.Frame(self, padding=(dpi_5, dpi_5))
         ttk.Button(self.frame_toolbar, text="Close", command=self.close_object_edit_frame).pack(side="left")
@@ -119,11 +108,21 @@ class ObjectEditWindow(tk.Toplevel):
         kwargs
     ):
         frame: NewObjectFrameBase
-        class_origin = get_origin(class_)
+        class_origin = get_origin(class_)  # Remove any Generic type subscriptions
         if class_origin is None:
             class_origin = class_
 
-        frame_class = self.TYPE_INIT_MAP.get(class_origin, NewObjectFrameStruct)
+        if issubclass_noexcept(class_origin, Flag):
+            frame_class = NewObjectFrameFlag
+        elif issubclass(class_origin, str):
+            frame_class = NewObjectFrameString
+        elif issubclass_noexcept(class_origin, (int, float, complex)):
+            frame_class = NewObjectFrameNumber
+        elif issubclass_noexcept(class_origin, (Sequence, Set)):
+            frame_class = NewObjectFrameIterable
+        else:
+            frame_class = NewObjectFrameStruct
+
         self.opened_frames.append(
             frame := frame_class(
                 class_,
