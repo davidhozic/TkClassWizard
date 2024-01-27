@@ -75,4 +75,4 @@ def is_deprecated(cls: type, parameter: str = None, type_: type = None):
         params = getattr(cls, "__wiz_deprecated_params__", set())
         return parameter in params
     
-    return type_ in getattr(cls, "__wiz_deprecated_param_types__", dict()).get(parameter, set())
+    return is_deprecated(type_) or type_ in getattr(cls, "__wiz_deprecated_param_types__", dict()).get(parameter, set())
