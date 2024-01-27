@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.4.1
+================
+- Fixed scaling (padding) issues
+
+
 v1.4.0
 ================
 - Definition of enums and literal values inside iterable types.

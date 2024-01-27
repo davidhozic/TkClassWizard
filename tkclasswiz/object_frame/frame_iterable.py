@@ -68,6 +68,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         allow_save = True
     ):
         dpi_5 = dpi_scaled(5)
+
         super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
         ListboxTooltip(self.storage_widget, 0)
@@ -79,10 +80,10 @@ class NewObjectFrameIterable(NewObjectFrameBase):
 
         ttk.Button(frame_cp, text="Copy", command=w.save_to_clipboard).pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_cp, text="Paste", command=w.paste_from_clipboard).pack(side="left", fill=tk.X, expand=True)
-        menubtn = ttk.Menubutton(frame_edit_remove, text="Add")
+        menubtn = ttk.Menubutton(frame_edit_remove, text="Insert item")
         menu = tk.Menu(menubtn)
         menubtn.configure(menu=menu)
-        menubtn.pack()
+        menubtn.pack(fill=tk.X)
         ttk.Button(frame_edit_remove, text="Remove", command=w.delete_selected).pack(fill=tk.X)
         ttk.Button(frame_edit_remove, text="Edit", command=lambda: self._edit_selected()).pack(fill=tk.X)
 

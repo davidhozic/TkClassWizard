@@ -52,16 +52,18 @@ class NewObjectFrameFlag(NewObjectFrameBase):
     ):
         super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
 
+        dpi_5 = dpi_scaled(5)
+        dpi_10 = dpi_scaled(5)
         ttk.Label(self.frame_main, text="Current value").pack(anchor=tk.W)
         w = PyObjectScalar(self.frame_main)
-        w.pack(fill=tk.X, pady=dpi_scaled(5))
+        w.pack(fill=tk.X, pady=dpi_5)
 
-        ttk.Separator(self.frame_main).pack(fill=tk.X, pady=dpi_scaled(5))
+        ttk.Separator(self.frame_main).pack(fill=tk.X, pady=dpi_10)
 
         ttk.Label(self.frame_main, text="Modify").pack(anchor=tk.W)
         combo_select = ComboBoxObjects(self.frame_main, width=max(map(len, map(str, list(class_)))))
         combo_select["values"] = list(class_)
-        combo_select.pack(anchor=tk.W, pady=dpi_scaled(5))
+        combo_select.pack(anchor=tk.W, pady=dpi_5)
         bnt_add_flag = ttk.Button(self.frame_main, text="Add flag", command=lambda: self._update_flag(combo_select.get(), True))
         bnt_add_flag.pack(anchor=tk.W)
         bnt_remove_flag = ttk.Button(self.frame_main, text="Remove flag", command=lambda: self._update_flag(combo_select.get(), False))

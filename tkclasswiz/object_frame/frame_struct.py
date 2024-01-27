@@ -150,12 +150,14 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
     def _create_fields(self, annotations: dict[str, type], additional_values: dict, frame: ttk.Frame):
         label_width = max(*map(len, annotations), 15) - 2
+        dpi_5 = dpi_scaled(5)
+        dpi_5h = dpi_5 // 2
 
         for (k, v) in annotations.items():
             # Init widgets
             entry_types = self.convert_types(v)
             frame_annotated = ttk.Frame(frame)
-            frame_annotated.pack(fill=tk.BOTH, expand=True, pady=5)
+            frame_annotated.pack(fill=tk.BOTH, expand=True, pady=dpi_5)
             ttk.Label(frame_annotated, text=k, width=label_width).pack(side="left")
 
             # Storage widget with the tooltip for displaying
@@ -198,10 +200,10 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             if not (any_filled and self.allow_save):
                 bnt_new_menu.configure(state="disabled")
 
-            bnt_copy_paste.pack(side="right", padx=2)
-            bnt_edit.pack(side="right", padx=2)
-            bnt_new_menu.pack(side="right", padx=2)
-            combo.pack(fill=tk.X, side="right", expand=True, padx=2)
+            bnt_copy_paste.pack(side="right", padx=dpi_5h)
+            bnt_edit.pack(side="right", padx=dpi_5h)
+            bnt_new_menu.pack(side="right", padx=dpi_5h)
+            combo.pack(fill=tk.X, side="right", expand=True, padx=dpi_5h)
             self._map[k] = (w, entry_types)
 
     def _fill_field_values(
