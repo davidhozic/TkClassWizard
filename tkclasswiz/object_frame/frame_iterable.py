@@ -4,7 +4,7 @@ from functools import partial
 from enum import Enum
 
 from ..doc import doc_category
-from ..deprecated import *
+from ..deprecation import *
 from ..utilities import *
 from ..convert import *
 from ..dpi import *

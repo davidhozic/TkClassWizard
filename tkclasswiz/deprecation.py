@@ -3,6 +3,8 @@ Module can be used to mark deprecated classes / parameters / parameter types.
 """
 from typing import overload
 
+from .doc import doc_category
+
 
 __all__ = (
     "register_deprecated",
@@ -11,6 +13,7 @@ __all__ = (
 
 
 @overload
+@doc_category("Deprecations", manual=True)
 def register_deprecated(cls: type):
     """
     Mark ``cls`` deprecated globally. This function cannot be
@@ -18,12 +21,14 @@ def register_deprecated(cls: type):
     """
 
 @overload
+@doc_category("Deprecations", manual=True)
 def register_deprecated(cls: type, parameter: str):
     """
     Marks a ``parameter`` to be deprecated under specific ``cls``.
     """
 
 @overload
+@doc_category("Deprecations", manual=True)
 def register_deprecated(cls: type, parameter: str, *types: type):
     """
     Marks multiple ``types`` to be deprecated for a certain ``parameter`` under ``cls``.
@@ -42,18 +47,21 @@ def register_deprecated(cls, parameter: str = None, *types: type):
         cls.__wiz_deprecated_param_types__[parameter].update(types)
 
 @overload
+@doc_category("Deprecations", manual=True)
 def is_deprecated(cls: type):
     """
     Checks if ``cls`` is deprecated globally.
     """
 
 @overload
+@doc_category("Deprecations", manual=True)
 def is_deprecated(cls: type, parameter: str):
     """
     Checks if ``parameter`` is deprecated under ``cls``.
     """
 
 @overload
+@doc_category("Deprecations", manual=True)
 def is_deprecated(cls: type, parameter: str, type_: type):
     """
     Checks if ``type_`` is deprecated for a certain ``parameter`` under ``cls``.

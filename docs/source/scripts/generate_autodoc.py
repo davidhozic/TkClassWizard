@@ -98,7 +98,7 @@ with open(os.path.join(OUTPUT_PATH, "index.rst"), "w", encoding="utf-8") as tocw
                         if manual:
                             _async_ = ":async:" if inspect.iscoroutinefunction(item) else ""
                             annotations = get_type_hints(item)
-                            return_ano = annotations.pop("return")
+                            return_ano = annotations.pop("return", None)
                             doc_str = inspect.cleandoc(item.__doc__)
                             # Replace titles with list titles
                             doc_str_titles = re.findall(r"[A-z]+\n-+", doc_str)

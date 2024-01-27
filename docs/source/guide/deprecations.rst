@@ -2,21 +2,33 @@
 Deprecations
 ========================
 
-TkClassWizard allows limited registration of deprecated parameters.
-This can currently be done with the use of a class parameter.
+TkClassWizard allows to users to deprecate different classes, classes' parameters and types under classes' parameter.
 
-To register a deprecated parameter, create a ``__deprecated_params__`` attribute under the
-class in question. The attribute is a list of names of the deprecated parameters.
+All the deprecations can be made with :func:`tkclasswiz.deprecation.register_deprecated` function.
+The function has 3 modes:
+
+- Deprecate class globally (only ``cls`` parameter given)
+- Deprecate a class parameter (``cls`` and ``parameter`` both given)
+- Deprecate a type under class parameter (``cls``, ``parameter`` and ``types`` are all given)
+  Please note that ``types`` is a variadic parameter, which means multiple types can be passed by
+  just separating them with a comma.
 
 
 .. code-block:: python
+    :caption: Deprecate usage of type :class:`~datetime.timedelta` under parameter ``next_service`` of class ``Car``.
 
-    class MyClass
-        __deprecated_params__ = ["a", "b"]
+    from datetime import timedelta, datetime
+    import tkclasswiz as wiz
 
-        def __init__(self, a: int, b: int, c: int):
-            ...
+    class Car:
+        def __init__(self, name: str, next_service: timedelta | datetime):
+            ...  # Implementation
+
+    wiz.register_deprecated(Car, "next_service", timedelta)
+    ...  # Other needed code
 
 
-The above example would allow the definition of the parameter ``c``, while parameters ``a`` and ``b``
-will be grayed out. Editing is still allowed for the purposes of backwards compatibility.
+The above example will create the following definition window:
+
+.. image:: ./images/new_define_frame_struct_deprecation.png
+

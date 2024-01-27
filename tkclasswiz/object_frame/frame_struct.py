@@ -12,7 +12,7 @@ from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
 from ..annotations import get_annotations
-from ..deprecated import *
+from ..deprecation import *
 from ..doc import doc_category
 
 from .frame_base import *
