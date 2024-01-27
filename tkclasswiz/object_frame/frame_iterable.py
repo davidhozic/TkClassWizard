@@ -68,7 +68,6 @@ class NewObjectFrameIterable(NewObjectFrameBase):
         allow_save = True
     ):
         dpi_5 = dpi_scaled(5)
-
         super().__init__(class_, return_widget, parent, old_data, check_parameters, allow_save)
         self.storage_widget = w = ListBoxScrolled(self.frame_main, height=20)
         ListboxTooltip(self.storage_widget, 0)
@@ -127,7 +126,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
             elif get_origin(arg) is Literal:
                 insert_items.append(...)
                 insert_items.extend(get_args(arg))
-            elif isclass(arg) or isfunction(arg):
+            else:
                 menu.add_command(
                     label=f"New {self.get_cls_name(arg, True)}",
                     command=partial(self.new_object_frame, arg, widget)
@@ -157,8 +156,8 @@ class NewObjectFrameIterable(NewObjectFrameBase):
             if isinstance(d, str) and str not in self._list_args:
                 self.check_literals(d, self.filter_literals(self._list_args))
 
-        return data
-    
+        return get_origin(self.class_)(data)
+
     def _edit_selected(self):
         selection = self.storage_widget.curselection()
         if len(selection) == 1:

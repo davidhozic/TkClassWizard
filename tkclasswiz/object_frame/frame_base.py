@@ -101,19 +101,20 @@ class NewObjectFrameBase(ttk.Frame, ABC):
         the original class when the name cannot be obtained.
         If alias exists, alias is returned instead.
         """
-        if (alias := get_aliased_name(cls)) is not None:
+        normal_cls = get_origin(cls) or cls
+        if (alias := get_aliased_name(normal_cls)) is not None:
             return alias + f" ({name})"
-        elif hasattr(cls, "__name__"):
-            name = cls.__name__
-        elif hasattr(cls, "_name") and cls._name:
-            name = cls._name
+        elif hasattr(normal_cls, "__name__"):
+            name = normal_cls.__name__
+        elif hasattr(normal_cls, "_name") and normal_cls._name:
+            name = normal_cls._name
         else:
-            name = str(cls)
+            name = str(normal_cls)
 
         if args and (type_args := get_args(cls)):
             name = (
                 name + 
-                f"[{ ', '.join([NewObjectFrameBase.get_cls_name(x) for x in type_args]) }]"
+                f"[{ ', '.join([NewObjectFrameBase.get_cls_name(x, True) for x in type_args]) }]"
             )
         
         return name
@@ -209,21 +210,29 @@ class NewObjectFrameBase(ttk.Frame, ABC):
             )
 
         origin = get_origin(input_type)
-        # Unpack Union items into a tuple
-        if origin is Union or issubclass_noexcept(origin, Iterable):
-            new_types = dict()
-            for type_ in chain.from_iterable([cls.convert_types(r) for r in get_args(input_type)]):
-                new_types[type_] = 0  # Use dictionary's keys as OrderedSet, with dummy value 0
-
-            new_types = tuple(new_types)
-            if origin is Union:
-                return new_types
-
-            return (origin[new_types],)
-
         if issubclass_noexcept(origin, Generic):
             # Patch for Python versions < 3.10
             input_type.__name__ = origin.__name__
+
+        # Unpack Union items into a tuple
+        if origin is Union or issubclass_noexcept(origin, (Iterable, Generic)):
+            new_types = []
+            for type_ in chain.from_iterable([cls.convert_types(r) for r in get_args(input_type)]):
+                new_types.append(type_)
+
+            new_types = tuple(new_types)
+            if origin is Union:
+                return new_types  # Just expand unions
+
+            # Process abstract classes and polymorphism
+            new_origins = []
+            for origin in cls.convert_types(origin):
+                if issubclass_noexcept(origin, (Generic, Iterable)):
+                    new_origins.append(origin[new_types])
+                else:
+                    new_origins.append(origin)
+
+            return tuple(new_origins)
 
         if input_type.__module__ == "builtins":
             # Don't consider built-int types for polymorphism
@@ -259,7 +268,7 @@ class NewObjectFrameBase(ttk.Frame, ABC):
 
     def update_window_title(self):
         "Set's the window title according to edit context."
-        self.origin_window.title(f"{'New' if self.old_gui_data is None else 'Edit'} {self.get_cls_name(self.class_)} object")
+        self.origin_window.title(f"{'New' if self.old_gui_data is None else 'Edit'} {self.get_cls_name(self.class_, True)} object")
 
     def close_frame(self):
         if self.allow_save and self.modified:

@@ -139,8 +139,8 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
         self._create_fields(annotations, additional_values, self.frame_main)
         if annotations_depr:
-            ttk.Separator(self.frame_main).pack(fill=tk.X)
-            ttk.Label(self.frame_main, text="Deprecated").pack(anchor=tk.W)
+            ttk.Separator(self.frame_main).pack(fill=tk.X, pady=dpi_5)
+            ttk.Label(self.frame_main, text="Deprecated", font=("TkDefaultFont", 10)).pack(anchor=tk.W)
             self._create_fields(annotations_depr, additional_values, self.frame_main)
 
         if old_data is not None:  # Edit
@@ -297,12 +297,13 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
             map_[attr] = value
 
+        class_ = get_origin(self.class_) or self.class_
         nickname = self.entry_nick.get() or None
-        object_ = ObjectInfo(self.class_, map_, nickname)  # Abstraction of the underlaying object
+        object_ = ObjectInfo(class_, map_, nickname)  # Abstraction of the underlying object
         if (
             not ignore_checks and
             self.check_parameters and
-            (inspect.isclass(self.class_) or inspect.isclass(get_origin(self.class_)))  # Only check objects
+            (inspect.isclass(class_))  # Only check objects
         ):
             # Cache the object created for faster
             _convert_to_objects_cached(object_)  # Tries to create instances to check for errors
@@ -334,20 +335,18 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         if isinstance(selection, str):
             selection = self.cast_type(selection, self._map[key][1])
 
-        if isinstance(selection, list):
-            types = self.convert_types(get_annotations(self.class_)[key])
-            for type_ in types:
-                if get_origin(type_) in {list, tuple, set, Iterable, ABCIterable}:
-                    list_type = type_
-                    break
-            else:
-                list_type = None
-
-            return self.new_object_frame(list_type, combo, old_data=selection)
         if isinstance(selection, ObjectInfo):
             return self.new_object_frame(selection.class_, combo, old_data=selection)
         else:
-            return self.new_object_frame(type(selection), combo, old_data=selection)
+            type_sel = type(selection)
+            for t in self.convert_types(get_annotations(self.class_)[key]):
+                if (get_origin(t) or t) == type_sel:
+                    type_ = t
+                    break
+            else:
+                type_ = None
+
+            return self.new_object_frame(type_, combo, old_data=selection)
 
 
 class NewObjectFrameStructView(NewObjectFrameStruct):
