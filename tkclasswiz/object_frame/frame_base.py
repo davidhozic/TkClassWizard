@@ -227,8 +227,10 @@ class NewObjectFrameBase(ttk.Frame, ABC):
             # Process abstract classes and polymorphism
             new_origins = []
             for origin in cls.convert_types(origin):
-                if issubclass_noexcept(origin, (Generic, Iterable)):
+                if issubclass_noexcept(origin, Iterable):
                     new_origins.append(origin[tuple(new_types)])
+                elif issubclass_noexcept(origin, Generic):
+                    new_origins.append(origin[tuple(new_types[:len(origin.__parameters__)])])
                 else:
                     new_origins.append(origin)
 

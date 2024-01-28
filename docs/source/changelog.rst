@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.4.3
+================
+- Fixed an error when a subclass's generic accepts less types than the original
+
+
 v1.4.2
 ================
 - Fixed issue with typing conversion.
