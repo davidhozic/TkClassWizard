@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.4.2
+================
+- Fixed issue with typing conversion.
+
+
 v1.4.1
 ================
 - Fixed scaling (padding) issues
