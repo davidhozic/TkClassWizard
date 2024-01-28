@@ -200,7 +200,7 @@ class NewObjectFrameBase(ttk.Frame, ABC):
                 if isabstract(type_):
                     r.remove(type_)
 
-            return tuple(r)
+            return tuple({a:0 for a in r})
 
         if isinstance(input_type, str):
             raise TypeError(
@@ -220,7 +220,7 @@ class NewObjectFrameBase(ttk.Frame, ABC):
             for type_ in chain.from_iterable([cls.convert_types(r) for r in get_args(input_type)]):
                 new_types.append(type_)
 
-            new_types = tuple(new_types)
+            new_types = remove_classes(new_types)
             if origin is Union:
                 return new_types  # Just expand unions
 
@@ -228,11 +228,11 @@ class NewObjectFrameBase(ttk.Frame, ABC):
             new_origins = []
             for origin in cls.convert_types(origin):
                 if issubclass_noexcept(origin, (Generic, Iterable)):
-                    new_origins.append(origin[new_types])
+                    new_origins.append(origin[tuple(new_types)])
                 else:
                     new_origins.append(origin)
 
-            return tuple(new_origins)
+            return remove_classes(new_origins)
 
         if input_type.__module__ == "builtins":
             # Don't consider built-int types for polymorphism
