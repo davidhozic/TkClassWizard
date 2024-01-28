@@ -24,6 +24,12 @@ Glossary
 Releases
 ---------------------
 
+v1.4.5
+================
+- Further generic type fixes
+- Fixed type deprecations to also consider subclasses
+
+
 v1.4.4
 ================
 - Fixed generic types under iterable types expansion.

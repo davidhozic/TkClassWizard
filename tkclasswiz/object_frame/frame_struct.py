@@ -11,7 +11,7 @@ from ..utilities import *
 from ..storage import *
 from ..messagebox import Messagebox
 from ..extensions import extendable
-from ..annotations import get_annotations
+from ..annotations import get_annotations, convert_types
 from ..deprecation import *
 from ..doc import doc_category
 
@@ -155,7 +155,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
 
         for (k, v) in annotations.items():
             # Init widgets
-            entry_types = self.convert_types(v)
+            entry_types = convert_types(v)
             frame_annotated = ttk.Frame(frame)
             frame_annotated.pack(fill=tk.BOTH, expand=True, pady=dpi_5)
             ttk.Label(frame_annotated, text=k, width=label_width).pack(side="left")
@@ -339,7 +339,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             return self.new_object_frame(selection.class_, combo, old_data=selection)
         else:
             type_sel = type(selection)
-            for t in self.convert_types(get_annotations(self.class_)[key]):
+            for t in convert_types(get_annotations(self.class_)[key]):
                 if (get_origin(t) or t) == type_sel:
                     type_ = t
                     break

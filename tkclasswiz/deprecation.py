@@ -1,8 +1,11 @@
 """
 Module can be used to mark deprecated classes / parameters / parameter types.
 """
-from typing import overload
+from typing import overload, get_origin
+from itertools import chain
 
+from .utilities import issubclass_noexcept
+from .annotations import convert_types
 from .doc import doc_category
 
 
@@ -42,6 +45,7 @@ def register_deprecated(cls, parameter: str = None, *types: type):
         cls.__wiz_deprecated_params__ = getattr(cls, "__wiz_deprecated_params__", set())
         cls.__wiz_deprecated_params__.add(parameter)
     else:
+        types = tuple(chain.from_iterable(map(convert_types, types)))
         cls.__wiz_deprecated_param_types__ = getattr(cls, "__wiz_deprecated_param_types__", dict())
         cls.__wiz_deprecated_param_types__[parameter] = cls.__wiz_deprecated_param_types__.get(parameter, set())
         cls.__wiz_deprecated_param_types__[parameter].update(types)
@@ -74,5 +78,18 @@ def is_deprecated(cls: type, parameter: str = None, type_: type = None):
     if type_ is None:
         params = getattr(cls, "__wiz_deprecated_params__", set())
         return parameter in params
+
+    depr_types = getattr(cls, "__wiz_deprecated_param_types__", dict()).get(parameter, set())
+    if is_deprecated(type_) or type_ in depr_types:
+        return True
     
-    return is_deprecated(type_) or type_ in getattr(cls, "__wiz_deprecated_param_types__", dict()).get(parameter, set())
+    origin = get_origin(type_)
+    if origin is not None and origin in depr_types:
+        return True
+
+    type_ = origin or type_
+    for depr_type in depr_types:
+        if issubclass_noexcept(type_, depr_type):
+            return True
+
+    return False

@@ -1,17 +1,20 @@
 """
 Module used for managing annotations.
 """
-from typing import Union, Optional, get_args, Generic, get_origin, get_type_hints
+from typing import Union, Optional, Generic, Iterable, get_args, get_origin, get_type_hints
 from datetime import datetime, timedelta, timezone
+from inspect import isclass, isabstract
+from itertools import product, chain
 from contextlib import suppress
-from inspect import isclass
-from .doc import doc_category
+
 from .utilities import issubclass_noexcept
+from .doc import doc_category
 
 
 __all__ = (
     "register_annotations",
     "get_annotations",
+    "convert_types",
 )
 
 
@@ -116,3 +119,74 @@ def get_annotations(class_) -> dict:
         del annotations["return"]
 
     return annotations
+
+
+def convert_types(input_type: type):
+    """
+    Type preprocessing method, that extends the list of types with inherited members (polymorphism)
+    and removes classes that are wrapped by some other class, if the wrapper class also appears in
+    the annotations.
+    """
+    def remove_classes(types: list):
+        r = types.copy()
+        for type_ in types:
+            # It's a wrapper of some class -> remove the wrapped class
+            if hasattr(type_, "__wrapped__"):
+                if type_.__wrapped__ in r:
+                    r.remove(type_.__wrapped__)
+
+            # Abstract classes are classes that don't allow instantiation -> remove the class
+            if isabstract(type_):
+                r.remove(type_)
+
+        return tuple({a:0 for a in r})
+
+
+    if isinstance(input_type, str):
+        raise TypeError(
+            f"Provided type '{input_type}' is not a type - it is a string!\n"
+            "Potential subscripted type problem?\n"
+            "Instead of e. g., list['type'], try using typing.List['type']."
+        )
+
+    origin = get_origin(input_type)
+    if issubclass_noexcept(origin, Generic):
+        # Patch for Python versions < 3.10
+        input_type.__name__ = origin.__name__
+
+    # Unpack Union items into a tuple
+    if origin is Union or issubclass_noexcept(origin, (Iterable, Generic)):
+        new_types = []
+        for arg_group in get_args(input_type):
+            new_types.append(remove_classes(list(convert_types(arg_group))))
+
+        if origin is Union:
+            return tuple(chain.from_iterable(new_types))  # Just expand unions
+
+        # Process abstract classes and polymorphism
+        new_origins = []
+        for origin in convert_types(origin):
+            if issubclass_noexcept(origin, Generic):
+                for comb in product(*new_types):
+                    new_origins.append(origin[comb])
+            elif issubclass_noexcept(origin, Iterable):
+                new = origin[tuple(chain.from_iterable(new_types))] if len(new_types) else origin
+                new_origins.append(new)
+            else:
+                new_origins.append(origin)
+
+        return remove_classes(new_origins)
+
+    if input_type.__module__ == "builtins":
+        # Don't consider built-int types for polymorphism
+        # No removal of abstract classes is needed either as builtins types aren't abstract
+        return (input_type,)
+
+    # Extend subclasses
+    subtypes = []
+    if hasattr(input_type, "__subclasses__"):
+        for st in input_type.__subclasses__():
+            subtypes.extend(convert_types(st))
+
+    # Remove wrapped classes (eg. wrapped by decorator) + ABC classes
+    return remove_classes([input_type, *subtypes])
