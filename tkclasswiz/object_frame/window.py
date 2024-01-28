@@ -112,7 +112,7 @@ class ObjectEditWindow(tk.Toplevel):
 
         if issubclass_noexcept(class_origin, Flag):
             frame_class = NewObjectFrameFlag
-        elif issubclass(class_origin, str):
+        elif issubclass_noexcept(class_origin, str):
             frame_class = NewObjectFrameString
         elif issubclass_noexcept(class_origin, (int, float, complex)):
             frame_class = NewObjectFrameNumber

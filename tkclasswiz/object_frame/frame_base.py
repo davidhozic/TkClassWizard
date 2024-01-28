@@ -2,7 +2,7 @@ from typing import get_args, get_origin, Iterable, Union, Literal, Any, TYPE_CHE
 from abc import ABC, abstractmethod
 from inspect import isabstract
 from contextlib import suppress
-from itertools import chain
+from itertools import chain, product
 from functools import cache
 
 from ..convert import *
@@ -202,6 +202,7 @@ class NewObjectFrameBase(ttk.Frame, ABC):
 
             return tuple({a:0 for a in r})
 
+
         if isinstance(input_type, str):
             raise TypeError(
                 f"Provided type '{input_type}' is not a type - it is a string!\n"
@@ -217,20 +218,20 @@ class NewObjectFrameBase(ttk.Frame, ABC):
         # Unpack Union items into a tuple
         if origin is Union or issubclass_noexcept(origin, (Iterable, Generic)):
             new_types = []
-            for type_ in chain.from_iterable([cls.convert_types(r) for r in get_args(input_type)]):
-                new_types.append(type_)
+            for arg_group in get_args(input_type):
+                new_types.append(remove_classes(list(cls.convert_types(arg_group))))
 
-            new_types = remove_classes(new_types)
             if origin is Union:
-                return new_types  # Just expand unions
+                return tuple(chain.from_iterable(new_types))  # Just expand unions
 
             # Process abstract classes and polymorphism
             new_origins = []
             for origin in cls.convert_types(origin):
                 if issubclass_noexcept(origin, Iterable):
-                    new_origins.append(origin[tuple(new_types)])
+                    new_origins.append(origin[tuple(chain.from_iterable(new_types))])
                 elif issubclass_noexcept(origin, Generic):
-                    new_origins.append(origin[tuple(new_types[:len(origin.__parameters__)])])
+                    for comb in product(*new_types):
+                        new_origins.append(origin[comb])
                 else:
                     new_origins.append(origin)
 

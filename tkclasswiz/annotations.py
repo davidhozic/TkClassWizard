@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from contextlib import suppress
 from inspect import isclass
 from .doc import doc_category
+from .utilities import issubclass_noexcept
 
 
 __all__ = (
@@ -97,7 +98,7 @@ def get_annotations(class_) -> dict:
     with suppress(AttributeError, TypeError):
         if isclass(class_):
             annotations = get_type_hints(class_.__init__)
-        elif isclass(origin_class := get_origin(class_)) and issubclass(origin_class, Generic):
+        elif isclass(origin_class := get_origin(class_)) and issubclass_noexcept(origin_class, Generic):
             # Resolve generics
             annotations = get_type_hints(origin_class.__init__)
             generic_types = get_args(origin_class.__orig_bases__[0])
