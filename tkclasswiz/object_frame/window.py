@@ -108,9 +108,7 @@ class ObjectEditWindow(tk.Toplevel):
         kwargs
     ):
         frame: NewObjectFrameBase
-        class_origin = get_origin(class_)  # Remove any Generic type subscriptions
-        if class_origin is None:
-            class_origin = class_
+        class_origin = get_origin(class_) or class_  # Remove any Generic type subscriptions
 
         if issubclass_noexcept(class_origin, Flag):
             frame_class = NewObjectFrameFlag
