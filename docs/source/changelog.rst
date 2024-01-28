@@ -24,9 +24,14 @@ Glossary
 Releases
 ---------------------
 
+v1.4.4
+================
+- Fixed generic types under iterable types expansion.
+
+
 v1.4.3
 ================
-- Fixed an error when a subclass's generic accepts less types than the original
+- Fixed an error when a subclass's generic accepts less types than the original.
 
 
 v1.4.2
