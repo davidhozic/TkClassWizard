@@ -149,16 +149,18 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         self.remember_gui_data()
 
     def _create_fields(self, annotations: dict[str, type], additional_values: dict, frame: ttk.Frame):
-        label_width = max(*map(len, annotations), 15) - 2
         dpi_5 = dpi_scaled(5)
         dpi_5h = dpi_5 // 2
 
+        labels: list[ttk.Label] = []
         for (k, v) in annotations.items():
             # Init widgets
             entry_types = convert_types(v)
             frame_annotated = ttk.Frame(frame)
             frame_annotated.pack(fill=tk.BOTH, expand=True, pady=dpi_5)
-            ttk.Label(frame_annotated, text=k, width=label_width).pack(side="left")
+            label = ttk.Label(frame_annotated, text=k)
+            labels.append(label)
+            label.pack(side="left")
 
             # Storage widget with the tooltip for displaying
             # nicknames on ObjectInfo instances
@@ -205,6 +207,10 @@ class NewObjectFrameStruct(NewObjectFrameBase):
             bnt_new_menu.pack(side="right", padx=dpi_5h)
             combo.pack(fill=tk.X, side="right", expand=True, padx=dpi_5h)
             self._map[k] = (w, entry_types)
+
+        max_width = max(label.winfo_reqwidth() for label in labels) // 5
+        for label in labels:
+            label.config(width=max_width)
 
     def _fill_field_values(
         self,
