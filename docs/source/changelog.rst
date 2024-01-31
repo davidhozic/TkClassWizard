@@ -24,6 +24,11 @@ Glossary
 Releases
 ---------------------
 
+v1.4.6
+================
+- Fixed some parameter name lengths not being accommodated for.
+
+
 v1.4.5
 ================
 - Further generic type fixes
