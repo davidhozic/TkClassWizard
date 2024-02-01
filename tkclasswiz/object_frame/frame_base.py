@@ -80,9 +80,11 @@ class NewObjectFrameBase(ttk.Frame, ABC):
         "If editing, the value being edited"
 
         # If return_widget is None, it's a floating display with no return value
-        editing_index = return_widget.current() if return_widget is not None else -1
-        if editing_index == -1:
-            editing_index = None
+        editing_index = None
+        if old_data is not None and return_widget is not None:
+            current = return_widget.current()
+            if current != -1:
+                editing_index = current
 
         self.editing_index = editing_index
         "The index of object being edited"
@@ -293,4 +295,5 @@ class NewObjectFrameBase(ttk.Frame, ABC):
         if isinstance(self.return_widget, ComboBoxObjects):
             self.return_widget.current(ind)
         else:
+            self.return_widget.select_clear("0", tk.END)
             self.return_widget.selection_set(ind)

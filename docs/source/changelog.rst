@@ -24,6 +24,13 @@ Glossary
 Releases
 ---------------------
 
+v1.4.7
+===================
+- Fixed incorrect item being removed (at incorrect index) when editing an object.
+- Fixed :class:`tkclasswiz.storage.ListBoxObjects` still selecting the old value when a new value
+  was inserted. Now only the added value is selected.
+
+
 v1.4.6
 ================
 - Fixed some parameter name lengths not being accommodated for.
