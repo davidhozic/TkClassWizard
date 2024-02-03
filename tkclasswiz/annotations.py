@@ -6,7 +6,10 @@ from datetime import datetime, timedelta, timezone
 from inspect import isclass, isabstract
 from itertools import product, chain
 from contextlib import suppress
-from types import UnionType
+try:
+    from types import UnionType
+except ImportError:
+    UnionType = Union
 
 from .utilities import issubclass_noexcept
 from .doc import doc_category
