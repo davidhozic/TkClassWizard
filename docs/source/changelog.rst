@@ -19,10 +19,25 @@ Glossary
         The change could break functionality from previous versions but only if it
         was used in a certain way.
 
+    |UNRELEASED|
+      These changes have not been yet released.
 
 ---------------------
 Releases
 ---------------------
+
+v1.4.8
+=====================
+- Fixed :class:`tkclasswiz.convert.convert_objects_to_script` function:
+  
+  - not being able to convert global enums (or enum flags)
+  - duplicated import strings
+  
+- Fixed flags not definable as flags when editing list-like objects.
+- Fixed tooltip style not adjusting when using ttkbootstrap.
+  E. g., in dark mode only the text was updated, but background was still the same. 
+- Fixed the Python3.10+ Union type (``A | B``) not being detected as an union type.
+
 
 v1.4.7
 ===================

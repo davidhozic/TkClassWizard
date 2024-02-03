@@ -1,7 +1,6 @@
 from typing import get_args, get_origin, Any, List, Literal
-from inspect import isclass, isfunction
 from functools import partial
-from enum import Enum
+from enum import Enum, Flag
 
 from ..doc import doc_category
 from ..deprecation import *
@@ -120,7 +119,7 @@ class NewObjectFrameIterable(NewObjectFrameBase):
             if arg is None:
                 insert_items.append(...)
                 insert_items.append(None)
-            elif issubclass_noexcept(arg, Enum):
+            elif issubclass_noexcept(arg, Enum) and not issubclass_noexcept(arg, Flag):
                 insert_items.append(...)
                 insert_items.extend(list(arg))
             elif get_origin(arg) is Literal:

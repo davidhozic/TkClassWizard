@@ -1,6 +1,4 @@
 from typing import get_args, get_origin, Iterable, Union, Literal, Dict, Tuple
-
-from collections.abc import Iterable as ABCIterable
 from functools import partial
 from enum import Enum, Flag
 
@@ -252,7 +250,7 @@ class NewObjectFrameStruct(NewObjectFrameBase):
         # The class of last list like type. Needed when "Edit selected" is used
         # since we don't know what type it was
         return any_filled
-    
+
     @extendable
     def load(self, old_data: ObjectInfo):
         data = old_data.data
