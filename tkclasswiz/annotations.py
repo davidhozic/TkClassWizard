@@ -6,6 +6,10 @@ from datetime import datetime, timedelta, timezone
 from inspect import isclass, isabstract
 from itertools import product, chain
 from contextlib import suppress
+try:
+    from types import UnionType
+except ImportError:
+    UnionType = Union
 
 from .utilities import issubclass_noexcept
 from .doc import doc_category
@@ -155,12 +159,13 @@ def convert_types(input_type: type):
         input_type.__name__ = origin.__name__
 
     # Unpack Union items into a tuple
-    if origin is Union or issubclass_noexcept(origin, (Iterable, Generic)):
+    union_type = origin in {Union, UnionType}
+    if union_type or issubclass_noexcept(origin, (Iterable, Generic)):
         new_types = []
         for arg_group in get_args(input_type):
             new_types.append(remove_classes(list(convert_types(arg_group))))
 
-        if origin is Union:
+        if union_type:
             return tuple(chain.from_iterable(new_types))  # Just expand unions
 
         # Process abstract classes and polymorphism
