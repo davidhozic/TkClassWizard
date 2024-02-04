@@ -168,7 +168,13 @@ class NewObjectFrameBase(ttk.Frame, ABC):
             dict: lambda v: convert_to_object_info(json.loads(v))
         }
 
-        for type_ in filter(lambda t: t.__module__ == "builtins", types):
+
+        types = list(filter(lambda t: t.__module__ == "builtins", types))
+
+        if isinstance(value, str) and str in types:
+            return value
+
+        for type_ in types:
             with suppress(Exception):
                 cast_funct = CAST_FUNTIONS.get(type_)
                 if cast_funct is None:

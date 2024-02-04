@@ -26,6 +26,11 @@ Glossary
 Releases
 ---------------------
 
+v1.4.10
+=====================
+- Fixed string casting sometimes being cast to a list type.
+
+
 v1.4.8 / v1.4.9
 =====================
 - Fixed :class:`tkclasswiz.convert.convert_objects_to_script` function:
