@@ -1,12 +1,11 @@
 import tkinter.ttk as ttk
 import tkinter as tk
 
+from abc import ABCMeta, abstractmethod
 from typing import Optional
 
 from ..convert import ObjectInfo
 from ..storage import *
-from ..dpi import dpi_scaled
-from abc import ABCMeta, abstractmethod
 
 
 class BaseToolTip(tk.Toplevel):
@@ -24,12 +23,15 @@ class BaseToolTip(tk.Toplevel):
         timeout_ms: int = 500,
     ):
         super().__init__(widget)
-        self.label = ttk.Label(self, background="white", wraplength=1000)
+        ttk.Style().configure(
+            style="tooltip.TLabel",  # ttkbootstrap compatibility
+            background="white",
+        )
+        self.label = ttk.Label(self, style="tooltip.TLabel", wraplength=1000)
         self.schedule_id = None
         self._widget = widget
         self.timeout_ms = timeout_ms
-        self.label.pack(padx=5, pady=5)
-        self.config(bg="white")
+        self.label.pack()
         self.pack_propagate(True)
         self._hide_tooltip()
         self.overrideredirect(True)

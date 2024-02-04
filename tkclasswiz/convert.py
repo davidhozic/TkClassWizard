@@ -240,17 +240,11 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
         object_str = f"{object.class_.__name__}(\n    "
         attr_str = []
         for attr, value in object.data.items():
-            if isinstance(value, (ObjectInfo, list, tuple, set, Enum)):
-                value, import_data_ = convert_objects_to_script(value)
-                import_data.extend(import_data_)
-
-            elif isinstance(value, str):
-                value, _ = convert_objects_to_script(value)
-
+            value, import_data_ = convert_objects_to_script(value)
+            import_data.extend(import_data_)
             attr_str.append(f"{attr}={value},\n")
 
         import_data.append(f"from {object.class_.__module__} import {object.class_.__name__}")
-
         object_str += "    ".join(''.join(attr_str).splitlines(True)) + ")"
         object_data.append(object_str)
 
@@ -265,8 +259,15 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
         object_data.append(_list_data)
 
     elif isinstance(object, Enum):
-        import_data.append(f"from {object.__module__} import {type(object).__name__}")
-        object_data.append(str(object))
+        type_name = type(object).__name__
+        import_data.append(f"from {object.__module__} import {type_name}")
+        object_name = object._name_
+        if not object_name:
+            name = f"{type_name}({object._value_})"
+        else:
+            name = ' | '.join(map(lambda name: f"{type_name}.{name}", object_name.split('|')))
+
+        object_data.append(name)
 
     else:
         if isinstance(object, str):
@@ -275,7 +276,7 @@ def convert_objects_to_script(object: Union[ObjectInfo, list, tuple, set, str]):
         else:
             object_data.append(str(object))
 
-    return ",".join(object_data).strip(), import_data
+    return ",".join(object_data).strip(), sorted(set(import_data), key=lambda x: len(x), reverse=True)
 
 
 @extendable
